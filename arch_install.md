@@ -596,7 +596,7 @@ sudo pacman -S stow
 Thư mục neitnd_dotfiles/ là thư mục cần tập trung quản lý các cấu hình.
 Với .config:
 ```bash
-mkdir -p ~/neitnd_dotfiles/.config && cd ~/neitnd_dotfiles && for item in hypr waybar cmus htop swaync rofi kitty wallpaper_custom fastfetch MangoHud easyeffects fcitx5 nwg-displays chrome-flags.conf mimeapps.list mpd; do [ -e ~/.config/"$item" ] && [ ! -L ~/.config/"$item" ] && [ ! -e .config/"$item" ] && mv ~/.config/"$item" .config/; done && stow .
+mkdir -p ~/neitnd_dotfiles/.config && cd ~/neitnd_dotfiles && for item in hypr waybar cmus htop swaync rofi kitty wallpaper_custom fastfetch MangoHud easyeffects fcitx5 nwg-displays chrome-flags.conf mimeapps.list mpd rustdesk xdg-desktop-portal uwsm sublime-text; do [ -e ~/.config/"$item" ] && [ ! -L ~/.config/"$item" ] && [ ! -e .config/"$item" ] && mv ~/.config/"$item" .config/; done && stow .
 
 ```
 Với .local:
@@ -617,4 +617,190 @@ cd ~/neitnd_dotfiles && stow .
 
 ```
 
-## 
+Để ignore file khi dùng stow:
+```bash
+echo -e "\\.git\n\\.gitignore\n\\.stow-local-ignore\nREADME\\.md\narch_install\\.md" > ~/neitnd_dotfiles/.stow-local-ignore
+
+cd ~/neitnd_dotfiles && stow -R .
+```
+stow -R . sẽ tạo lại toàn bộ symlinks và có thể không xóa symlinks cũ, cần xóa thủ công.
+
+## Remote từ xa hoặc remote local
+Local dùng wayvnc `sudo pacman -S wayvnc`, 
+Giữ một terminal khi chạy lệnh: `wayvnc 0.0.0.0`
+Xem ip nội bộ của máy hiện tại: `ip a`, và lấy ip của wifi hoặc mạng mà thiết bị muốn remote và thiết bị này ở cùng mạng
+Trên điện thoại tải VNC viewer của RealVNC hoặc app VNC nào đó, nhập ip trên và connect
+
+Remote từ xa:
+Dùng RustDesk:
+Đảm bảo các port cần thiết, không xung đột:
+```bash
+sudo pacman -Rns xdg-desktop-portal-gnome xdg-desktop-portal-kde xdg-desktop-portal-wlr
+sudo pacman -S xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
+```
+Cấu hình khởi động nó trong các config của hyprland rồi (phải thông qua UWSM)
+```bash
+nano ~/.config/rustdesk/RustDesk.toml 
+```
+Ghi vào:
+```bash
+allow-wayland-screencast = true
+enable-experimental-wayland = true
+```
+```bash
+mkdir -p ~/.config/xdg-desktop-portal
+nano ~/.config/xdg-desktop-portal/portals.conf
+```
+Ghi vào: (đã backup file)
+```bash
+[preferred]
+default=hyprland;gtk
+org.freedesktop.impl.portal.Screencast=hyprland
+org.freedesktop.impl.portal.RemoteDesktop=hyprland
+```
+
+Tự đọng ghi nhứ lựa chọn màn hình (tránh thao tác trên máy khi kết nối từ xa)
+`nano ~/.config/hypr/xdph.conf`
+Thêm:
+```bash
+screencopy {
+    max_fps = 60
+    allow_token_by_default = true
+}
+```
+Mở file cấu hình phụ của RustDesk:
+```bash 
+nano ~/.config/rustdesk/RustDesk_local.toml
+```
+Đảm bảo cấu hình token được sinh ra có dạng (ví dụ):
+```bash
+wayland_restore_token = "hyprland_some_random_string_token"
+```
+(Nếu dòng này trống hoặc bị lỗi, bạn hãy xóa hẳn dòng đó đi, khởi động lại RustDesk và thực hiện lại Bước 2 để hệ thống tạo lại token sạch).Sau khi bạn bổ sung cấu hình xdph.conf và tích chọn Remember Selection
+
+Bươc trên có thể bị lỗi chưa fix được (không tạo token đó), phải mở GUI rustdesk để token đó lưu trong ram thì mới không phải chọn màn hình. có thể thêm vào hyprlan.conf: `exec-once = uwsm app -- rustdesk --tray` nhưng có thể tốn thêm ram. 
+Hoặc dùng cách tạo script chọn màn hình (đã thử và lỗi hiện thị camera của laptop thay vì màn hình):
+```bash
+Bước 1: Tạo Script tự động chọn màn hình
+Bạn copy và chạy toàn bộ cụm lệnh này trong terminal (nó sẽ tạo một thư mục scripts và lưu file auto_share.sh vào đó, đồng thời cấp quyền thực thi):
+bash
+mkdir -p ~/.config/hypr/scripts
+cat << 'EOF' > ~/.config/hypr/scripts/auto_share.sh
+#!/bin/bash
+# Lấy tên màn hình đầu tiên đang bật (ví dụ: eDP-1)
+MONITOR=$(hyprctl monitors | grep Monitor | head -n 1 | awk '{print $2}')
+# Tự động gửi kết quả chọn màn hình đó cho hệ thống
+echo "[SELECTION]/screen:$MONITOR"
+EOF
+chmod +x ~/.config/hypr/scripts/auto_share.sh
+Bước 2: Báo cho Portal sử dụng Script trên
+Bạn mở lại file xdph.conf:
+bash
+nano ~/.config/hypr/xdph.conf
+Sửa lại phần screencopy như sau (chú ý đường dẫn file):
+ini
+screencopy {
+    max_fps = 60
+    custom_picker_binary = /home/neitnd/.config/hypr/scripts/auto_share.sh
+}
+Bước 3: Áp dụng
+Khởi động lại máy hoặc chạy lệnh khởi động lại portal để nó nhận cấu hình mới:
+bash
+systemctl --user restart xdg-desktop-portal-hyprland
+```
+
+## Thiết lập tự động mở gnome-keyring cho các app cần: chrome, vscode,...
+
+dùng chính mật khẩu user để mở khóa Keyring ngầm bên dưới (cơ chế PAM auto-unlock). Vì đang sử dụng hệ thống tùy biến ráp nối thủ công (SDDM + UWSM + Hyprland), cơ chế chuyển tiếp mật khẩu này chưa được cấu hình.
+
+Để xem và sửa các khóa cũ (cần cùng password với pass user), dùng seahorse, có giao diện để xóa, sửa, thêm khóa.
+```bash
+sudo pacman -S seahorse
+```
+bash
+Có thể cần có các package khác nữa, để kiểm tra:
+```bash
+pacman -Qs gnome-keyring seahorse libsecret
+```
+```bash
+sudo nano /etc/pam.d/sddm
+```
+Kiểm tra đã có các dòng:
+```bash
+auth optional pam_gnome_keyring.so
+session optional pam_gnome_keyring.so auto_start
+```
+Sau đó nếu vẫn có hộp thoại yêu cầu nhập key khi mở app, hãy tích chọn không hỏi lại.
+Khi nào đổi pass user thì cần vào seahorse và đổi pass của các keystore tương ứng.
+
+## Cài SDDM và UWSM
+```bash
+sudo pacman -S uwsm
+sudo pacman -S sddm
+sudo systemctl enable sddm.service
+
+
+```
+Trong hyprland.conf
+```bash
+XÓA 3 DÒNG NÀY:
+exec-once = dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+exec-once = systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+exec-once = systemctl --user start hyprland-session.target
+```
+và sửa các dòng thành chạy với uwsm, cả khi nhấn phím tắt super+space thì rofi cũng phải mở bằng uwsm (đã bkup file cấu hình):
+```bash
+ --- Startup (Chuẩn hóa UWSM) ---
+exec-once = uwsm app -- waybar
+exec-once = uwsm app -- swaync
+exec-once = systemctl --user start hyprpolkitagent
+exec-once = uwsm app -- awww-daemon --quiet
+exec-once = uwsm app -- awww img $HOME/.config/wallpaper_custom/window11_wallpaper_ani.jpg
+exec-once = uwsm app -- easyeffects --gapplication-service
+exec-once = uwsm app -- wl-paste --type text --watch cliphist store
+exec-once = uwsm app -- wl-paste --type image --watch cliphist store
+exec-once = uwsm app -- fcitx5
+```
+
+Chuyển biến môi trường sang cho UWSM từ hyprland.conf: đã backup trong ~/.config/uwsm/env
+```bash
+XCURSOR_SIZE=24
+QT_QPA_PLATFORMTHEME=qt5ct
+GVIM_ENABLE_WAYLAND=1
+
+XDG_CURRENT_DESKTOP=Hyprland
+XDG_SESSION_TYPE=wayland
+XDG_SESSION_DESKTOP=Hyprland
+
+# NVIDIA
+LIBVA_DRIVER_NAME=nvidia
+__GLX_VENDOR_LIBRARY_NAME=nvidia
+NVD_BACKEND=direct
+```
+reboot và khi vào màn hình SDDM thì chọn hyprland (uwsm managed)
+
+Về SDDM:
+Vô hiệu hóa tính năng tự động đăng nhập của Getty (TTY): chỉ cần xóa file cấu hình ghi đè của Getty mà bạn đã tạo trước đó bằng lệnh sau:
+```bash
+sudo rm /etc/systemd/system/getty@tty1.service.d/autologin.conf
+```
+Cấu hình Tự động đăng nhập (Auto-login) chuẩn qua SDDM và hyprland (không thực hiện/khuyến khích vì mất tính năng pam để mở keyring cho chrome, vscode,...): Tạo file cấu hình cho SDDM:
+```bash
+sudo mkdir -p /etc/sddm.conf.d
+sudo nano /etc/sddm.conf.d/autologin.conf
+```
+Dán đoạn mã sau vào file (Thay thế neitng bằng tên user chính xác của bạn nếu có thay đổi):
+```bash
+[Autologin]
+User=neitng
+Session=hyprland
+```
+reboot
+
+## Cấu hình rofi mở app qua uwsm: 
+mờ: ~/.config/rofi/config.rasi
+thêm vào 2 ngoặc nhọn của configuration:
+```bash
+drun-launch: "uwsm app -- {cmd}";
+```
+

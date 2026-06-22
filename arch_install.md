@@ -801,6 +801,6 @@ reboot
 mờ: ~/.config/rofi/config.rasi
 thêm vào 2 ngoặc nhọn của configuration:
 ```bash
-drun-launch: "uwsm app -- {cmd}";
+run-command: "uwsm app -- {cmd}";
 ```
 

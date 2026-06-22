@@ -1,6 +1,6 @@
 /*****----- Configuration -----*****/
 configuration {
-    drun-launch: "uwsm app -- {cmd}";
+    run-command: "uwsm app -- {cmd}";
 	modi:                       "drun,run,filebrowser,window";
 	font: 			    "Iosevka Nerd Font 10";
     show-icons:                 true;

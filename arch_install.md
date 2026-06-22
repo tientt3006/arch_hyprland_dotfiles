@@ -679,7 +679,7 @@ wayland_restore_token = "hyprland_some_random_string_token"
 (Nếu dòng này trống hoặc bị lỗi, bạn hãy xóa hẳn dòng đó đi, khởi động lại RustDesk và thực hiện lại Bước 2 để hệ thống tạo lại token sạch).Sau khi bạn bổ sung cấu hình xdph.conf và tích chọn Remember Selection
 
 Bươc trên có thể bị lỗi chưa fix được (không tạo token đó), phải mở GUI rustdesk để token đó lưu trong ram thì mới không phải chọn màn hình. có thể thêm vào hyprlan.conf: `exec-once = uwsm app -- rustdesk --tray` nhưng có thể tốn thêm ram. 
-Hoặc dùng cách tạo script chọn màn hình (đã thử và lỗi hiện thị camera của laptop thay vì màn hình):
+Hoặc dùng cách tạo script chọn màn hình:
 ```bash
 Bước 1: Tạo Script tự động chọn màn hình
 Bạn copy và chạy toàn bộ cụm lệnh này trong terminal (nó sẽ tạo một thư mục scripts và lưu file auto_share.sh vào đó, đồng thời cấp quyền thực thi):

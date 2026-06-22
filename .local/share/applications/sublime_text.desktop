@@ -1,0 +1,24 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Sublime Text
+GenericName=Text Editor
+Comment=Sophisticated text editor for code, markup and prose
+Exec=bash -c 'if pgrep -x "sublime_text" > /dev/null; then /usr/bin/subl -n "%F"; else /usr/bin/subl "%F"; fi'
+Terminal=false
+MimeType=text/plain;
+Icon=sublime-text
+Categories=TextEditor;Development;
+StartupNotify=true
+StartupWMClass=subl
+Actions=new-window;new-file;
+
+[Desktop Action new-window]
+Name=New Window
+Exec=/usr/bin/subl --launch-or-new-window
+OnlyShowIn=Unity;
+
+[Desktop Action new-file]
+Name=New File
+Exec=/usr/bin/subl --command new_file
+OnlyShowIn=Unity;

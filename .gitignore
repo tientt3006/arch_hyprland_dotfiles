@@ -1,0 +1,40 @@
+# ==============================================================================
+# .gitignore cho Repository Dotfiles (Cấu hình hệ thống)
+# ==============================================================================
+
+# Loại bỏ các file tạm, log, cache chung của hệ thống và IDE
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+.vscode/
+.idea/
+
+# Bỏ qua các thư mục cache của ứng dụng nếu copy nhầm vào
+**/.cache/
+**/cache/
+**/node_modules/
+
+# ------------------------------------------------------------------------------
+# Loại trừ các file trạng thái/lịch sử thay đổi liên tục của các app (không nên backup)
+# ------------------------------------------------------------------------------
+# Rofi history
+.config/rofi/history
+
+# Cliphist (lịch sử clipboard - Chứa thông tin nhạy cảm như mật khẩu!)
+**/*cliphist*
+**/*clipboard*/*.bin
+**/*clipboard*/*.txt
+
+# Fcitx5 bamboo state thay đổi liên tục khi gõ
+.config/fcitx5/conf/bamboo.state
+.config/fcitx5/bamboo/history/
+.config/fcitx5/bamboo/spelling.dict
+
+# MangoHud logs
+**/.config/MangoHud/presets/
+
+# Thunar state/bookmark tự sinh
+.config/Thunar/accels.scm

@@ -1,0 +1,17 @@
+[StreamInputs]
+inputDevice=alsa_input.pci-0000_00_1f.3.analog-stereo
+plugins=rnnoise#0
+visiblePage=pluginsPage
+visiblePlugin=rnnoise#0
+
+[StreamOutputs]
+outputDevice=alsa_output.pci-0000_00_1f.3.analog-stereo
+plugins=autogain#0,bass_enhancer#0
+visiblePage=pluginsPage
+visiblePlugin=autogain#0
+
+[Window]
+height=499
+visiblePage=inputPage
+visiblePresetSheetPage=autoloadingPage
+width=463

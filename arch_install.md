@@ -804,3 +804,100 @@ thêm vào 2 ngoặc nhọn của configuration:
 run-command: "uwsm app -- {cmd}";
 ```
 
+## rescan wifi khi dùng nmtui
+chạy:
+```bash
+nmcli device wifi rescan
+```
+sau đó vào nmtui
+
+## Giao diện cho kết nội mạng:
+`sudo pacman -S network-manager-applet`
+Mở bằng rofi, gõ networke...
+Hoặc chọn biểu tượng wifi trên thanh waybar
+
+## phát wifi
+`yay -S linux-wifi-hotspot`
+`sudo pacman -S dnsmasq hostapd`
+xem tên card wifi :`nmcli device`
+Lưu ý kiểm tra:
+`iw list | grep -A 10 "valid interface combinations"`
+nếu có `#{ managed } <= 1, #{ AP } <= 1` thì có thể thu phát đồng thời nhưng còn tùy vào `chamel <= 1` hay `chanel <= 2` để có thể phát trên cùng band không, máy lenovo ideapad gaming 3 15IAH7 này chỉ có chanel <= 1 nên phải chọn chanel trùng chanel của wifi thu vào.
+
+Mở Wifi hotspot từ rofi và tạo wifi hotspot, chọn wifi interface và internet interface trùng nhau là tên card wifi hiện tại đang dùng, mở advance và chọn chanel trùng wifi hiện tại đang kết nối.
+xem chanel: `nmcli device wifi`
+
+## Chuẩn hóa khi dùng UWSM:
+Kiểm tra với lệnh:
+`systemctl --user list-unit-files --type=service --state=enabled`
+
+với các app như (sẽ được cập nhật đầu đủ nhất):
+
+```bash
+hyprpolkitagent.service
+pipewire.service
+swaync.service
+waybar.service  
+wireplumber.service  
+hypridle.service
+```
+Một số app không có service nên nếu cần thì exec-once trong hyprland, hoặc có status là generated thì không cần chạy lệnh enable trên, 
+thì nên dùng lệnh `systemctl --user enable --now <servicename>.service` để khởi động thay vì exec-once trong hyprland config dù đã wrap trong uwsm.
+
+## Cấu hình về lid, gập màn hình laptop:
+
+`sudo nano /etc/systemd/logind.conf`
+
+sửa 2 dòng thành sau: (bỏ # comment và sửa thành giá trị ignore):
+
+```bash
+HandlePowerKey=ignore
+HandleLidSwitch=ignore
+```
+
+và các cấu hình trong file hyprland.conf, hypridle.conf
+Cách hoạt động hiện tại:
+```bash
+general {
+    lock_cmd = pidof hyprlock || hyprlock       # Lệnh gọi màn hình khóa
+    before_sleep_cmd = loginctl lock-session    # Đảm bảo máy tự khóa trước khi rơi vào trạng thái Suspend
+    after_sleep_cmd = hyprctl dispatch dpms on  # Bật lại tín hiệu màn hình khi máy thức dậy
+}
+
+# 1. Sau 5 phút (300s): Giảm độ sáng màn hình
+listener {
+    timeout = 300
+    on-timeout = brightnessctl -s set 10%       # Lưu độ sáng hiện tại và giảm xuống 10%
+    on-resume = brightnessctl -r                # Khôi phục lại độ sáng cũ khi lắc chuột
+}
+
+# 2. Sau 6 phút (360s): Tắt hẳn tín hiệu màn hình (Máy vẫn chạy)
+listener {
+    timeout = 360
+    on-timeout = hyprctl dispatch dpms off
+    on-resume = hyprctl dispatch dpms on
+}
+
+# 3. Sau 10 phút (600s): Khóa màn hình
+listener {
+    timeout = 600
+    on-timeout = loginctl lock-session
+}
+
+# 4. Sau 30 phút (1800s): Đưa máy vào trạng thái Suspend (Giống Sleep trên Windows)
+listener {
+    timeout = 1800
+    on-timeout = systemctl suspend
+}
+```
+
+## Bluetoth:
+`sudo pacman -S bluez bluez-utils blueman`
+mở app và kết nối bluetoth bằng rofi
+
+## Mở micro cho tai nghe bluetoth nếu có:
+mở app bluetoth và chuột phải vào thiết bị bluetoth, chọn profile head set 
+
+## fix lỗi easy effect không có tín hiệu âm thanh vào hay ra:
+mở setting của easy effect và chọn lại thiết bị vào ra thay vì để defaut or auto
+

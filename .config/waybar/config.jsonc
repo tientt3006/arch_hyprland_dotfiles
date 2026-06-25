@@ -28,7 +28,8 @@
         "custom/separator",
         "custom/notification",
         "custom/separator",
-        "custom/powermenu"
+        "custom/powermenu",
+        "idle_inhibitor"
     ],
     // Separator module
     "custom/separator": {
@@ -130,6 +131,16 @@
     "clock": {
         "format": "{:%d %b, %H:%M}",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": "",  // Mắt mở (Chống buồn ngủ ĐANG BẬT - Treo máy vô tư)
+            "deactivated": "" // Mắt nhắm (Chống buồn ngủ ĐÃ TẮT - Ngủ tự nhiên)
+        },
+        "tooltip": true,
+        "tooltip-format-activated": "Đang treo máy (Không ngủ)",
+        "tooltip-format-deactivated": "Quản lý năng lượng bình thường"
     },
     "tray": {
         "spacing": 10

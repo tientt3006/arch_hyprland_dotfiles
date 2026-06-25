@@ -901,3 +901,4 @@ mở app bluetoth và chuột phải vào thiết bị bluetoth, chọn profile 
 ## fix lỗi easy effect không có tín hiệu âm thanh vào hay ra:
 mở setting của easy effect và chọn lại thiết bị vào ra thay vì để defaut or auto
 
+test git push 1

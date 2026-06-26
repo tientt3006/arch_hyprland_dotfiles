@@ -689,3 +689,5 @@ Hệ thống đăng nhập SDDM đã được làm mới hoàn toàn với giao 
   sudo cp /usr/share/sddm/themes/catppuccin-mocha-blue/Components/UserField.qml /usr/share/sddm/themes/catppuccin-mocha-blue/Components/UserField.qml.bak
   sudo cp ~/UserField_combo.qml /usr/share/sddm/themes/catppuccin-mocha-blue/Components/UserField.qml
   ```
+## btop
+yay -S btop

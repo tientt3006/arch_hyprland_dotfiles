@@ -649,13 +649,13 @@ Hệ thống sử dụng bộ 3 công cụ kinh điển nhất của dân chơi 
 ### 4. Power Menu (Alt + F4)
 - **Giao diện dạng danh sách:** Trả về layout dọc 5 dòng quen thuộc, giúp chữ không bao giờ bị cắt ngắn (`...`). Font Nerd lớn và sắc nét.
 - **Thao tác nhanh bằng bàn phím (Hotkeys):**
-  - Mở menu (`Alt + F4`), sau đó **KHÔNG CẦN CHỌN VÀ BẤM ENTER**, bạn chỉ cần gõ ngay 1 phím:
-    - **`s`** = Shutdown (Tắt máy)
-    - **`r`** = Reboot (Khởi động lại)
-    - **`l`** = Lock (Khóa màn hình)
-    - **`u`** = Suspend (Sleep/Ngủ)
-    - **`e`** = Logout (Đăng xuất)
-  - Ở màn hình xác nhận, bấm **`y`** (Yes) hoặc **`n`** (No) để chốt hành động cực kỳ mượt mà.
+  - Mở menu (`Alt + F4`), sau đó bạn chỉ cần giữ `Alt` và gõ thêm 1 phím:
+    - **`Alt + s`** = Shutdown (Tắt máy)
+    - **`Alt + r`** = Reboot (Khởi động lại)
+    - **`Alt + l`** = Lock (Khóa màn hình)
+    - **`Alt + u`** = Suspend (Sleep/Ngủ)
+    - **`Alt + e`** = Logout (Đăng xuất)
+  - Ở màn hình xác nhận, bấm **`Alt + y`** (Yes) hoặc **`Alt + n`** (No) để chốt hành động cực kỳ mượt mà.
 
 ### 5. Màn hình khóa (Hyprlock)
 - Đã được đồng bộ thiết kế sang Catppuccin Mocha.

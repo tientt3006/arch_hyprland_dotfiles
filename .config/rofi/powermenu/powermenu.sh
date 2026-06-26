@@ -8,13 +8,13 @@ uptime="`uptime -p | sed -e 's/up //g'`"
 host=`cat /etc/hostname`
 
 # Options
-shutdown='󰐥  [s] Shutdown'
-reboot='󰜉  [r] Reboot'
-lock='󰌾  [l] Lock'
-suspend='󰤄  [u] Suspend'
-logout='󰍃  [e] Logout'
-yes='󰄬  [y] Yes'
-no='󰅖  [n] No'
+shutdown='󰐥  [Alt+s] Shutdown'
+reboot='󰜉  [Alt+r] Reboot'
+lock='󰌾  [Alt+l] Lock'
+suspend='󰤄  [Alt+u] Suspend'
+logout='󰍃  [Alt+e] Logout'
+yes='󰄬  [Alt+y] Yes'
+no='󰅖  [Alt+n] No'
 
 # Rofi CMD
 rofi_cmd() {
@@ -22,16 +22,17 @@ rofi_cmd() {
 		-p "$host" \
 		-mesg "Uptime: $uptime" \
 		-theme ${dir}/${theme}.rasi \
-		-kb-custom-1 "s,S" \
-		-kb-custom-2 "r,R" \
-		-kb-custom-3 "l,L" \
-		-kb-custom-4 "u,U" \
-		-kb-custom-5 "e,E"
+		-kb-screenshot "" \
+		-kb-select-1 "Alt+l" \
+		-kb-select-2 "Alt+u" \
+		-kb-select-3 "Alt+e" \
+		-kb-select-4 "Alt+r" \
+		-kb-select-5 "Alt+s"
 }
 
 # Confirmation CMD
 confirm_cmd() {
-	rofi -theme-str 'window {location: center; anchor: center; fullscreen: false; width: 250px;}' \
+	rofi -theme-str 'window {location: center; anchor: center; fullscreen: false; width: 350px;}' \
 		-theme-str 'mainbox {children: [ "message", "listview" ];}' \
 		-theme-str 'listview {columns: 2; lines: 1;}' \
 		-theme-str 'element-text {horizontal-align: 0.5; font: "JetBrainsMono Nerd Font 13";}' \
@@ -40,8 +41,8 @@ confirm_cmd() {
 		-p 'Confirmation' \
 		-mesg 'Are you Sure?' \
 		-theme ${dir}/${theme}.rasi \
-		-kb-custom-1 "y,Y" \
-		-kb-custom-2 "n,N"
+		-kb-select-1 "Alt+y" \
+		-kb-select-2 "Alt+n"
 }
 
 # Ask for confirmation

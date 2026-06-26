@@ -2,7 +2,7 @@
 configuration {
     run-command: "uwsm app -- {cmd}";
 	modi:                       "drun,run,filebrowser,window";
-	font: 			    "Iosevka Nerd Font 10";
+	font: 			    "JetBrainsMono Nerd Font 12";
     show-icons:                 true;
     display-drun:               "";
     display-run:                "";
@@ -48,7 +48,7 @@ window {
     location:                    center;
     anchor:                      center;
     fullscreen:                  false;
-    width:                       600px;
+    width:                       800px;
     x-offset:                    0px;
     y-offset:                    0px;
 
@@ -57,7 +57,7 @@ window {
     margin:                      0px;
     padding:                     0px;
     border:                      0px solid;
-    border-radius:               8px;
+    border-radius:               14px;
     border-color:                @border-colour;
     cursor:                      "default";
     /* Backgroud Colors */
@@ -77,7 +77,7 @@ mainbox {
     enabled:                     true;
     spacing:                     10px;
     margin:                      0px;
-    padding:                     30px;
+    padding:                     20px 24px;
     border:                      0px solid;
     border-radius:               0px 0px 0px 0px;
     border-color:                @border-colour;
@@ -150,7 +150,7 @@ case-indicator {
 listview {
     enabled:                     true;
     columns:                     1;
-    lines:                       8;
+    lines:                       12;
     cycle:                       true;
     dynamic:                     true;
     scrollbar:                   true;

@@ -1,24 +1,25 @@
 {
 	"file_history":
 	[
+		"/home/neitnd/.config/hypr/hyprland.conf",
+		"/home/neitnd/.config/hypr/hyprlock.conf",
 		"/home/neitnd/.config/sublime-text/Packages/Default/Preferences.sublime-settings",
 		"/home/neitnd/.config/sublime-text/Packages/User/Preferences.sublime-settings",
 		"/home/neitnd/.zshrc",
 		"/home/neitnd/.config/kitty/kitty.conf",
-		"/home/neitnd/.config/hypr/hyprland.conf",
 		"/home/neitnd/.config/kitty/theme.conf"
 	],
 	"folder_history":
 	[
 	],
 	"last_version": 4200,
-	"last_window_id": 17,
+	"last_window_id": 20,
 	"log_indexing": false,
 	"next_update_check": 1782536113,
 	"settings":
 	{
 		"new_window_full_screen": false,
-		"new_window_height": 510.0,
+		"new_window_height": 1020.0,
 		"new_window_maximized": true,
 		"new_window_position":
 		[
@@ -164,7 +165,7 @@
 			{
 			}
 		},
-		"new_window_width": 583.0
+		"new_window_width": 950.0
 	},
 	"windows":
 	[
@@ -177,15 +178,6 @@
 			},
 			"buffers":
 			[
-				{
-					"file": "/home/neitnd/.config/hypr/hyprland.conf",
-					"settings":
-					{
-						"buffer_size": 8300,
-						"encoding": "UTF-8",
-						"line_ending": "Unix"
-					}
-				}
 			],
 			"build_system": "",
 			"build_system_choices":
@@ -223,9 +215,9 @@
 			},
 			"file_history":
 			[
+				"/home/neitnd/.config/hypr/hyprland.conf",
 				"/home/neitnd/.zshrc",
 				"/home/neitnd/.config/kitty/kitty.conf",
-				"/home/neitnd/.config/hypr/hyprland.conf",
 				"/home/neitnd/.config/kitty/theme.conf"
 			],
 			"find":
@@ -265,38 +257,6 @@
 				{
 					"sheets":
 					[
-						{
-							"buffer": 0,
-							"file": "/home/neitnd/.config/hypr/hyprland.conf",
-							"selected": true,
-							"semi_transient": false,
-							"settings":
-							{
-								"buffer_size": 8300,
-								"regions":
-								{
-								},
-								"selection":
-								[
-									[
-										0,
-										0
-									]
-								],
-								"settings":
-								{
-									"syntax": "Packages/Text/Plain text.tmLanguage",
-									"tab_size": 4,
-									"translate_tabs_to_spaces": true
-								},
-								"translation.x": 0.0,
-								"translation.y": 0.0,
-								"zoom_level": 1.0
-							},
-							"stack_index": 0,
-							"stack_multiselect": false,
-							"type": "text"
-						}
 					]
 				}
 			],
@@ -339,7 +299,7 @@
 				]
 			},
 			"pinned_build_system": "",
-			"position": "0,1,0,0,0,0,0,939,499,1920,1080,0",
+			"position": "0,1,0,0,0,0,0,945,938,1920,1080,0",
 			"project": "",
 			"replace":
 			{

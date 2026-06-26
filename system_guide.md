@@ -209,6 +209,8 @@ paccache -r                # Dọn cache cũ
 | `Super + E` | Mở File Manager (Thunar) |
 | `Super + W` | Đóng cửa sổ hiện tại |
 | `Super + V` | Mở lịch sử Clipboard |
+| `Super + Shift + F` | Tìm kiếm File (Rofi Finder) |
+| `Super + Shift + G` | Tìm kiếm Nội dung File (Live Grep) |
 | `Super + N` | Mở/đóng bảng thông báo |
 | `Super + Tab` | Chuyển đổi cửa sổ |
 | `Alt + F4` | Mở menu Power (Shutdown/Reboot/Logout) |
@@ -570,3 +572,100 @@ cat /sys/class/power_supply/BAT1/energy_full         # Dung lượng thực tế
 cat /sys/class/power_supply/BAT1/energy_full_design  # Dung lượng thiết kế
 # Nếu energy_full < 80% energy_full_design → pin đã chai đáng kể
 ```
+
+---
+
+## Q11: Rofi File Finder (Tìm kiếm file siêu tốc)
+
+### Tổng quan
+Hệ thống của bạn đã được cấu hình một script Rofi tùy chỉnh tại `~/.config/hypr/scripts/rofi-finder.sh` để tìm kiếm file nhanh. Bấm **Super + Shift + F** để gọi chức năng này.
+
+### Cơ chế hoạt động thông minh
+1. **Ưu tiên File vừa mở:**
+   - Script tự động đọc file `~/.local/share/recently-used.xbel` của Linux (nơi hệ điều hành lưu lại mọi file bạn đã tương tác từ bất kỳ phần mềm nào).
+   - 25 file/thư mục vừa mở gần nhất sẽ luôn được ghim lên **đầu danh sách**. Khi bạn gõ từ khóa, Rofi sẽ vẫn ưu tiên kết quả nằm trong nhóm file vừa mở lên trước. Trải nghiệm y hệt Mac Spotlight.
+2. **Tìm kiếm file siêu tốc với `fd`:**
+   - Không đọc database định kỳ như Windows Search, script dùng lệnh `fd` quét trực tiếp toàn bộ thư mục `$HOME` theo thời gian thực (loại bỏ thư mục rác hệ thống như `.git, .vscode, node_modules...`).
+   - Tối ưu hóa: Thay vì phải fork hàng nghìn tiến trình con để phân biệt file/folder, script chia hai luồng `--type d` và `--type f` chạy song song siêu nhẹ, xử lý 10.000 file trong tích tắc.
+
+### Các Phím tắt trong bảng tìm kiếm
+
+Khi chọn một mục trên Rofi, bạn có thể thực hiện 4 thao tác sau:
+
+| Phím bấm | Hành động | Giải thích |
+|---|---|---|
+| `Enter` | **Mở mặc định** | Dùng cơ chế `gio open` (giống Thunar). File `.conf` mở bằng Sublime, ảnh mở bằng Image Viewer, thư mục mở Thunar. |
+| `Alt + D` | **Mở thư mục chứa** | Bật Thunar trỏ thẳng đến nơi đang cất giữ file đó. |
+| `Alt + T` | **Mở Terminal tại đây** | Bật Kitty thẳng vào thư mục chứa file. |
+| `Alt + E` | **Mở bằng Editor** | Bật Neovim để chỉnh sửa nhanh file/thư mục đó. |
+
+---
+
+## Q12: Live Grep (Tìm kiếm nội dung siêu tốc)
+
+### Tổng quan
+Tìm kiếm theo tên file là chưa đủ khi bạn làm việc với hàng ngàn file code hoặc tài liệu dài. Tính năng **Live Grep** giúp bạn lục tung từng dòng chữ bên trong tất cả các file của bạn theo thời gian thực (real-time). 
+Bấm **Super + Shift + G** để kích hoạt.
+
+### Cơ chế hoạt động
+Hệ thống sử dụng bộ 3 công cụ kinh điển nhất của dân chơi Linux:
+1. **Kitty Floating Window:** Một cửa sổ terminal cực xịn xò (bao phủ 90% màn hình) được Hyprland bật lên giữa màn hình chỉ dành riêng cho tác vụ này.
+2. **ripgrep (rg):** Công cụ tìm kiếm nội dung nhanh nhất thế giới (viết bằng Rust). Nó thông minh đến mức tự động bỏ qua các file ảnh, video, file nén, hay các thư mục `.git`, `node_modules` để tập trung 100% công lực quét text.
+3. **fzf + bat:** Trình tìm kiếm mờ (Fuzzy Finder). Thay vì bắt `ripgrep` chạy 1 lần, `fzf` ra lệnh cho `ripgrep` chạy lại liên tục sau **mỗi một ký tự** bạn gõ vào. Đồng thời, `bat` hỗ trợ preview ngay bên cạnh màn hình với đầy đủ màu sắc (syntax highlight).
+
+### Hướng dẫn sử dụng
+1. Bấm `Super + Shift + G`.
+2. Gõ từ khóa bạn muốn tìm (vd: `export function` hoặc `hyprland`).
+3. Khung bên trái sẽ hiển thị danh sách các file + số dòng chứa từ khóa.
+4. Khung bên phải hiển thị nội dung file đó (có tô màu) để bạn xem trước.
+5. Dùng `Up/Down` để cuộn qua các kết quả.
+6. Bấm `Enter` để mở file đó bằng ứng dụng mặc định (Sublime Text/Neovim). Mọi thứ diễn ra trong chưa tới 1 giây!
+
+---
+
+## Q13: Tinh chỉnh Giao diện & Terminal (Mới cập nhật)
+
+### 1. Kitty Terminal
+- **Giao diện Catppuccin Mocha:** Toàn bộ bảng màu của Kitty (từ màu chữ, màu nền đến 16 màu ANSI) đã được đồng bộ chuẩn Catppuccin Mocha, trùng khớp hoàn toàn với màu hệ thống.
+- **Hiệu ứng Kính (Glassmorphism):** Độ mờ (`opacity`) được tăng lên `0.88`, kết hợp với hiệu ứng làm mờ nền (`background_blur 10`), tạo cảm giác sang trọng.
+- **Độ phản hồi siêu tốc:** Thêm cấu hình `repaint_delay 10` và `input_delay 3` giúp thao tác gõ chữ gần như không có độ trễ.
+- **Tiêu đề Tab gọn gàng:** Lược bỏ phần tên máy cũ dài dòng, chỉ giữ lại thư mục/tiến trình đang chạy.
+
+### 2. ZSH & Môi trường dòng lệnh
+- **Quản lý lịch sử thông minh (history-substring-search):** 
+  - Gõ một phần lệnh bất kỳ (ví dụ: `pacman`) rồi bấm mũi tên **Lên/Xuống**. Zsh sẽ lọc ra tất cả các lệnh cũ có chứa từ "pacman".
+- **Phím tắt điều hướng Text (Word-by-word):**
+  - Bấm `Ctrl + Mũi tên Trái/Phải` để nhảy con trỏ qua từng chữ một, tiện lợi y hệt VSCode/Sublime Text.
+- **Bí danh (Alias) hiện đại:**
+  - `ls`, `ll`, `la` tự động dùng lệnh `eza` để hiển thị kèm icon màu sắc và phân nhóm thư mục cực kỳ dễ nhìn.
+  - `cat` tự động gọi lệnh `bat`, hỗ trợ tô màu code (syntax highlighting) ngay trong terminal.
+
+### 3. SwayNC (Trung tâm thông báo)
+- Đã được làm lại CSS 100% sang chuẩn Catppuccin Mocha:
+  - Nền tối `#1e1e2e`, chữ `#cdd6f4`, viền xanh `#89b4fa`.
+  - Thông báo quan trọng (Critical) có viền và nền hồng nhạt cảnh báo.
+  - Các nút bấm, thanh trượt Do Not Disturb được bo tròn, đẹp mắt.
+
+### 4. Power Menu (Alt + F4)
+- **Giao diện dạng danh sách:** Trả về layout dọc 5 dòng quen thuộc, giúp chữ không bao giờ bị cắt ngắn (`...`). Font Nerd lớn và sắc nét.
+- **Thao tác nhanh bằng bàn phím (Hotkeys):**
+  - Mở menu (`Alt + F4`), sau đó **KHÔNG CẦN CHỌN VÀ BẤM ENTER**, bạn chỉ cần gõ ngay 1 phím:
+    - **`s`** = Shutdown (Tắt máy)
+    - **`r`** = Reboot (Khởi động lại)
+    - **`l`** = Lock (Khóa màn hình)
+    - **`u`** = Suspend (Sleep/Ngủ)
+    - **`e`** = Logout (Đăng xuất)
+  - Ở màn hình xác nhận, bấm **`y`** (Yes) hoặc **`n`** (No) để chốt hành động cực kỳ mượt mà.
+
+### 5. Màn hình khóa (Hyprlock)
+- Đã được đồng bộ thiết kế sang Catppuccin Mocha.
+- Khu vực nhập mật khẩu (`input-field`) giờ đây có nền xám đen `Base`, chữ màu `Text`, và viền màu xanh `Blue`.
+- Báo hiệu trực quan:
+  - Khi đang nhập: Viền xanh.
+  - Khi kiểm tra thành công: Viền nháy Xanh lá (`Green`).
+  - Khi nhập sai: Viền nháy Đỏ hồng (`Red`).
+
+### 6. Màn hình đăng nhập (SDDM)
+- Hệ thống đã được cài đặt bộ Theme `catppuccin-sddm-theme-mocha` (tải từ AUR).
+- Giao diện được cấu hình sử dụng biến thể **Mocha Blue** (tại file `/etc/sddm.conf.d/catppuccin.conf`).
+- Khi Logout hoặc khởi động lại máy, bạn sẽ thấy màn hình đăng nhập hoàn toàn ăn khớp với giao diện tổng thể của Hyprland.

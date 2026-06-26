@@ -1,8 +1,9 @@
+/* Catppuccin Mocha */
 * {
-    background:     #11243695;
-    background-alt: #0B1723FF;
-    foreground:     #EAF2F9FF;
-    selected:       #71BBD4FF;
-    active:         #98C379FF;
-    urgent:         #E06C75FF;
+    background:     #1e1e2eD9;  /* Base 85% opacity */
+    background-alt: #313244FF;  /* Surface0 - alternate row */
+    foreground:     #cdd6f4FF;  /* Text */
+    selected:       #89b4faFF;  /* Blue */
+    active:         #a6e3a1FF;  /* Green */
+    urgent:         #f38ba8FF;  /* Red */
 }

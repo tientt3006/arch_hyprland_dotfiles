@@ -1,0 +1,9 @@
+/* Catppuccin Mocha — Power Menu Colors */
+* {
+    background:     #1e1e2eE6;  /* Base 90% opacity */
+    background-alt: #313244FF;  /* Surface0 */
+    foreground:     #cdd6f4FF;  /* Text */
+    selected:       #89b4faFF;  /* Blue */
+    active:         #a6e3a1FF;  /* Green */
+    urgent:         #f38ba8FF;  /* Red/Pink */
+}

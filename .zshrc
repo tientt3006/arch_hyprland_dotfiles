@@ -79,6 +79,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git
 zsh-autosuggestions
+zsh-history-substring-search
 zsh-syntax-highlighting
 )
 
@@ -116,20 +117,34 @@ source "$ZSH/oh-my-zsh.sh"
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+# --- Custom Aliases ---
+alias ls="eza --icons --group-directories-first"
+alias ll="eza -lh --icons --group-directories-first"
+alias la="eza -la --icons --group-directories-first"
+alias cat="bat"
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-# Định nghĩa phím Ctrl + Delete để xóa từ phía sau con trỏ
-bindkey '^[[3;5~' kill-word
-
-# Hỗ trợ Shift + Mũi tên để di chuyển nhanh qua các từ (Word-by-word)
-bindkey '^[[1;2D' backward-word
-
-# Thêm tính năng nhận diện phím chuẩn cho Terminal
-autoload -U up-line-or-beginning-search
-autoload -U down-line-or-beginning-search
 
 bindkey -v
 # Khôi phục lại Ctrl+R (tìm kiếm lịch sử) khi bật chế độ vim
 bindkey '^R' history-incremental-search-backward
+export KEYTIMEOUT=1
+
+# Định nghĩa phím Ctrl + Delete để xóa từ phía sau con trỏ
+bindkey '^[[3;5~' kill-word
+
+# Hỗ trợ Ctrl + Mũi tên để di chuyển nhanh qua các từ (Word-by-word)
+bindkey '^[[1;5D' backward-word
+bindkey '^[[1;5C' forward-word
+
+# Hỗ trợ tìm kiếm lịch sử thông minh bằng phím Lên/Xuống
+bindkey '^[[A' history-substring-search-up
+bindkey '^[OA' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+bindkey '^[OB' history-substring-search-down
+
+# Thêm tính năng nhận diện phím chuẩn cho Terminal
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
 export KEYTIMEOUT=1

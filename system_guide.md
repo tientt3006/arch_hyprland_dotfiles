@@ -666,6 +666,26 @@ Hệ thống sử dụng bộ 3 công cụ kinh điển nhất của dân chơi 
   - Khi nhập sai: Viền nháy Đỏ hồng (`Red`).
 
 ### 6. Màn hình đăng nhập (SDDM)
-- Hệ thống đã được cài đặt bộ Theme `catppuccin-sddm-theme-mocha` (tải từ AUR).
-- Giao diện được cấu hình sử dụng biến thể **Mocha Blue** (tại file `/etc/sddm.conf.d/catppuccin.conf`).
-- Khi Logout hoặc khởi động lại máy, bạn sẽ thấy màn hình đăng nhập hoàn toàn ăn khớp với giao diện tổng thể của Hyprland.
+Hệ thống đăng nhập SDDM đã được làm mới hoàn toàn với giao diện Catppuccin Mocha cùng các tinh chỉnh sâu để tăng trải nghiệm người dùng:
+
+- **Cài đặt bộ giao diện (Theme):**
+  Theme `catppuccin-sddm-theme-mocha` được cài đặt từ kho AUR thông qua lệnh:
+  ```bash
+  yay -S catppuccin-sddm-theme-mocha
+  ```
+
+- **Kích hoạt biến thể Mocha Blue:**
+  Tạo thư mục cấu hình (nếu chưa có) và áp dụng màu Blue đồng bộ với Waybar/Hyprland:
+  ```bash
+  sudo mkdir -p /etc/sddm.conf.d
+  echo -e "[Theme]\nCurrent=catppuccin-mocha-blue" | sudo tee /etc/sddm.conf.d/catppuccin.conf
+  ```
+
+- **Cải tiến chọn User nhanh (Dropdown List):**
+  Mặc định, theme Catppuccin dùng hộp thoại nhập chữ (`TextField`), bắt buộc phải tự gõ tên User. Để có thể bấm chọn nhanh User như màn hình gốc, file thành phần `UserField.qml` đã được lập trình lại thành danh sách thả xuống (`ComboBox`). 
+  File mã nguồn QML mới được lưu dự phòng tại thư mục Home (`~/UserField_combo.qml`). Lệnh thay thế đã được thực hiện:
+  ```bash
+  # Sao lưu file cũ và thay thế bằng file mới
+  sudo cp /usr/share/sddm/themes/catppuccin-mocha-blue/Components/UserField.qml /usr/share/sddm/themes/catppuccin-mocha-blue/Components/UserField.qml.bak
+  sudo cp ~/UserField_combo.qml /usr/share/sddm/themes/catppuccin-mocha-blue/Components/UserField.qml
+  ```

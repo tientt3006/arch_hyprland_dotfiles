@@ -2,34 +2,41 @@
     "layer": "top",
     "position": "top",
     "height": 30,
-    "margin-top": 10,
+    "margin-top": 60,
     "margin-left": 10,
     "margin-right": 10,
     "spacing": 4,
     "modules-left": [
-        "custom/launcher",
-        "custom/separator",
+        // "custom/launcher",
+        // "custom/separator",
         "hyprland/workspaces",
         "custom/separator",
         "hyprland/window"
     ],
     "modules-center": [
-        "network"
+        "custom/launcher"
+        // "network"
+        // "hyprland/window"
     ],
     "modules-right": [
-        "temperature",
-        "cpu",
-        "disk",
-        "battery",
-        "custom/separator",
-        "pulseaudio",
-        "clock",
+        // "temperature",
+        // "cpu",
+        // "memory",
+        // "disk",
+        // "custom/separator",
         "tray",
         "custom/separator",
+        "backlight",
+        "pulseaudio",
+        "battery",
+        // "hyprland/language",
+        // "bluetooth",
+        // "network",
+        "clock",
         "custom/notification",
         "custom/separator",
-        "custom/powermenu",
-        "idle_inhibitor"
+        "idle_inhibitor",
+        "custom/powermenu"
     ],
     // Separator module
     "custom/separator": {
@@ -43,13 +50,16 @@
         "all-outputs": true,
         "format": "{icon}",
         "format-icons": {
-            "1": "一",
-            "2": "二",
-            "3": "三",
-            "4": "四",
-            "5": "五",
-            "6": "六",
-            "7": "七",
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7",
+            "8": "8",
+            "9": "9",
+            "10": "10",
             "urgent": "*",
             "focused": "#",
             "default": ""
@@ -63,19 +73,35 @@
         }
     },
     "custom/launcher": {
-        "format": "♥",
-        "on-click": "rofi -show drun -theme $HOME/.config/rofi/config.rasi"
+        "format": "",
+        "on-click": "uwsm app -- rofi -show drun -theme $HOME/.config/rofi/config.rasi",
+        "tooltip": true,
+        "tooltip-format": "App Launcher"
     },
+    // "network": {
+    //     "format-wifi": "直 {essid} | {ipaddr} | {bandwidthTotalBytes}",
+    //     "format-ethernet": " {ifname} | {ipaddr} | {bandwidthTotalBytes}",
+    //     "format-linked": "{ifname} (No IP) ",
+    //     "format-disconnected": "Disconnected ⚠",
+    //     "format-alt": "{ifname}: {ipaddr}/{cidr}"
+    // },
     "network": {
-        "format-wifi": "直 {essid} | {ipaddr} | {bandwidthTotalBytes}",
-        "format-ethernet": " {ifname} | {ipaddr} | {bandwidthTotalBytes}",
-        "format-linked": "{ifname} (No IP) ",
-        "format-disconnected": "Disconnected ⚠",
-        "format-alt": "{ifname}: {ipaddr}/{cidr}"
+        "format-wifi": "<span size='130%'>{icon}</span> {signalStrength}%",
+        "format-ethernet": "<span size='130%'>󰈀</span> {ipaddr}",
+        "format-disconnected": "<span size='130%'>󰤭</span> Disconnected",
+        "tooltip-format": "{essid} - {ipaddr}",
+        "format-icons": [
+            "󰤯",
+            "󰤟",
+            "󰤢",
+            "󰤥",
+            "󰤨"
+        ],
+        "on-click": "uwsm app -- nm-connection-editor"
     },
     "temperature": {
         "thermal-zone": 1,
-        "critical-threshold": 80,
+        "critical-threshold": 95,
         "format": "{icon} {temperatureC}°C",
         "format-icons": [
             "",
@@ -85,24 +111,31 @@
     },
     "cpu": {
         "format": "󰔟 {usage}%",
-        "tooltip": false
+        "tooltip": true
+    },
+    "memory": {
+        "interval": 5,
+        "format": "󰍛 {}%",
+        "tooltip": true,
+        "tooltip-format": "RAM Usage",
+        "on-click": "uwsm app -- kitty -e htop"
     },
     "disk": {
         "interval": 30,
-        "format": " {free}",
+        "format": "󰋊 {free}",
         "path": "/"
     },
     "battery": {
         "states": {
-            "good": 95,
+            "good": 90,
             "warning": 30,
             "critical": 15
         },
-        "format": "{capacity}% {icon}",
-        "format-full": "{capacity}% 󰁹",
-        "format-charging": "{capacity}% ",
-        "format-plugged": "{capacity}% ",
-        "format-alt": "{time} {icon}",
+        "format": "{icon} {capacity}%",
+        "format-full": "󰁹 {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": " {capacity}%",
+        "format-alt": "{icon} {time}",
         "format-icons": [
             "󰁺",
             "󰁼",
@@ -111,62 +144,95 @@
             "󰁹"
         ]
     },
+    "backlight": {
+        "format": "{icon} {percent}%",
+        "format-icons": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ],
+        "tooltip": true,
+        "tooltip-format": "Brightness",
+        "on-scroll-up": "brightnessctl set +5%",
+        "on-scroll-down": "brightnessctl set 5%-"
+    },
     "pulseaudio": {
         "format": "{icon} {volume}%",
-        "format-bluetooth": "{volume}% {icon}",
-        "format-bluetooth-muted": " {icon}",
-        "format-muted": "  muted",
+        "format-bluetooth": "{volume}% {icon}󰂯",
+        "format-bluetooth-muted": "󰖁 {icon}󰂯",
+        "format-muted": "󰖁  muted",
         "format-icons": {
-            "headphone": "",
-            "phone": "",
-            "portable": "",
+            "headphone": "󰋋",
+            "phone": "󰄜",
+            "portable": "󰄜",
             "default": [
-                "",
-                "",
-                ""
+                "󰕿",
+                "󰖀",
+                "󰕾"
             ]
         },
-        "on-click": "pavucontrol"
+        "on-click": "uwsm app -- pavucontrol"
     },
     "clock": {
-        "format": "{:%d %b, %H:%M}",
+        "format": "󰥔 {:%d %b, %H:%M}",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
     },
     "idle_inhibitor": {
         "format": "{icon}",
         "format-icons": {
-            "activated": "",  // Mắt mở (Chống buồn ngủ ĐANG BẬT - Treo máy vô tư)
-            "deactivated": "" // Mắt nhắm (Chống buồn ngủ ĐÃ TẮT - Ngủ tự nhiên)
+            "activated": "󰈈", // Mắt mở
+            "deactivated": "󰈉" // Mắt nhắm
         },
         "tooltip": true,
-        "tooltip-format-activated": "Đang treo máy (Không ngủ)",
-        "tooltip-format-deactivated": "Quản lý năng lượng bình thường"
+        "tooltip-format-activated": "Keep Awake (Anti-sleep ON)",
+        "tooltip-format-deactivated": "Normal Power Management (Anti-sleep OFF)"
     },
     "tray": {
         "spacing": 10
     },
+    "bluetooth": {
+        "format": "󰂯 {status}",
+        "format-connected": "󰂯 {device_alias}",
+        "format-connected-battery": "󰂯 {device_alias} {device_battery_percentage}%",
+        "tooltip-format": "Bluetooth\n{num_connections} thiết bị đang kết nối",
+        "on-click": "uwsm app -- blueman-manager"
+    },
+    "hyprland/language": {
+        "format": "<span size='130%'>󰌌</span> {}",
+        "format-en": "US",
+        "format-vi": "VN"
+    },
     "custom/powermenu": {
-        "format": "⏻",
-        "on-click": "$HOME/.config/rofi/powermenu/powermenu.sh"
+        "format": "󰐥",
+        "on-click": "$HOME/.config/rofi/powermenu/powermenu.sh",
+        "tooltip": true,
+        "tooltip-format": "Power Menu"
     },
     "custom/notification": {
-        "tooltip": false,
+        "tooltip": true,
         "format": "{icon}",
         "format-icons": {
-            "notification": "<span foreground='red'><sup></sup></span>",
-            "none": "",
-            "dnd-notification": "<span foreground='red'><sup></sup></span>",
-            "dnd-none": "",
-            "inhibited-notification": "<span foreground='red'><sup></sup></span>",
-            "inhibited-none": "",
-            "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
-            "dnd-inhibited-none": ""
+            "notification": "󰂚<span foreground='red'><sup></sup></span>",
+            "none": "󰂚",
+            "dnd-notification": "󰂛<span foreground='red'><sup></sup></span>",
+            "dnd-none": "󰂛",
+            "inhibited-notification": "󰂚<span foreground='red'><sup></sup></span>",
+            "inhibited-none": "󰂚",
+            "dnd-inhibited-notification": "󰂛<span foreground='red'><sup></sup></span>",
+            "dnd-inhibited-none": "󰂛"
         },
         "return-type": "json",
         "exec-if": "which swaync-client",
         "exec": "swaync-client -swb",
         "on-click": "swaync-client -t -sw",
         "on-click-right": "swaync-client -d -sw",
-        "escape": true
+        "escape": true,
+        "tooltip-format": "Notifications"
     }
 }

@@ -1,143 +1,261 @@
+/* ============================================================
+   Waybar - Catppuccin Mocha Blue Dark
+   Palette: https://catppuccin.com/palette (Mocha)
+   ============================================================ */
+
+/* --- Catppuccin Mocha Color Tokens ---
+   Base:    #1e1e2e    Surface0: #313244    Surface1: #45475a
+   Text:    #cdd6f4    Subtext1: #bac2de    Overlay2: #9399b2
+   Blue:    #89b4fa    Sapphire: #74c7ec    Lavender: #b4befe
+   Green:   #a6e3a1    Yellow:   #f9e2af    Red:      #f38ba8
+   Mauve:   #cba6f7    Peach:    #fab387
+   ============================================================ */
+
 * {
     border: none;
     border-radius: 0;
-    font-family: "Cozette", "IPAGothic", monospace;
+    /* Đổi font Cozette (pixelated/monospace) thành Nerd Font hiện đại */
+    font-family: "JetBrainsMono Nerd Font", "FiraCode Nerd Font", "Symbols Nerd Font", sans-serif;
     font-size: 13px;
+    font-weight: 500;
     min-height: 0;
 }
 
+/* --- Thanh Bar (toàn bộ) --- */
 window#waybar {
-    background-color: rgba(17, 36, 54, 0.58);
-    color: #EAF2F9;
+    /* Nền Catppuccin Base bán trong suốt */
+    background-color: rgba(30, 30, 46, 0.82);
+    color: #cdd6f4;
+    border-radius: 10px;
     transition-property: background-color;
-    transition-duration: .5s;
-    border-radius: 8px;
+    transition-duration: 0.3s;
 }
 
+/* Khi Hyprland ẩn thanh bar (ví dụ ở chế độ toàn màn hình) */
 window#waybar.hidden {
-    opacity: 0.2;
+    opacity: 0.1;
 }
 
+/* --- Workspaces --- */
 #workspaces button {
-    padding: 0 5px;
-    padding-top: 2px;
+    padding: 0 8px;
     background-color: transparent;
-    color: #EAF2F9;
-    border-bottom: 3px solid transparent;
+    color: #6c7086; /* overlay0 - màu xám nhạt cho ws không active */
+    border-radius: 6px;
+    margin: 4px 2px;
+    transition: all 0.2s ease;
 }
 
 #workspaces button:hover {
-    background: rgba(0, 0, 0, 0.2);
-    box-shadow: inherit;
-    border-bottom: 3px solid #EAF2F9;
+    background-color: rgba(137, 180, 250, 0.15); /* blue tinted hover */
+    color: #89b4fa;
 }
 
 #workspaces button.active {
-    background-color: transparent;
-    color: #71BBD4;
-    border-bottom: 3px solid #71BBD4;
+    background-color: rgba(137, 180, 250, 0.20);
+    color: #89b4fa; /* blue */
+    font-weight: bold;
 }
 
 #workspaces button.urgent {
-    background-color: transparent;
-    color: #eb4d4b;
-    border-bottom: 3px solid #eb4d4b;
+    background-color: rgba(243, 139, 168, 0.20);
+    color: #f38ba8; /* red */
 }
 
-#mode {
-    background-color: #64727D;
-    border-bottom: 3px solid #EAF2F9;
-}
-
+/* --- Tất cả module chung --- */
 #clock,
 #battery,
-#cpu,
-#memory,
-#disk,
-#temperature,
 #backlight,
 #network,
 #pulseaudio,
-#custom-media,
+#bluetooth,
+#temperature,
+#cpu,
+#memory,
+#disk,
 #tray,
-#mode,
 #idle_inhibitor,
-#mpd,
+#language,
 #custom-launcher,
 #custom-powermenu,
 #custom-notification,
 #custom-separator,
 #window {
     padding: 0 10px;
-    color: #EAF2F9;
+    color: #cdd6f4;
+    border-radius: 6px;
+    margin: 4px 0;
 }
 
+/* --- Tiêu đề cửa sổ ở giữa --- */
 #window {
-    font-weight: bold;
+    font-weight: 600;
+    color: #bac2de; /* subtext1 - trắng nhạt hơn */
+    font-style: italic;
 }
 
+/* --- Separator --- */
 #custom-separator {
-    color: #EAF2F9;
+    color: #45475a; /* surface1 - gần như ẩn, đủ thấy vạch ngăn */
     padding: 0 4px;
+    font-size: 11px;
 }
 
+/* --- Nút Launcher (trái cùng) --- */
 #custom-launcher {
-    color: #EAF2F9;
-    font-size: 16px;
-    padding-left: 15px;
-    padding-right: 10px;
+    color: #89b4fa;  /* blue */
+    font-size: 17px;
+    padding-left: 14px;
+    padding-right: 12px;
+    border-radius: 10px 0 0 10px;
 }
 
+#custom-launcher:hover {
+    color: #b4befe; /* lavender */
+}
+
+/* --- Nút Power Menu (phải cùng) --- */
 #custom-powermenu {
-    color: #EAF2F9;
-    font-size: 16px;
+    color: #f38ba8; /* red */
+    font-size: 15px;
     padding-left: 10px;
-    padding-right: 15px;
+    padding-right: 14px;
+    border-radius: 0 10px 10px 0;
 }
 
-#battery.charging,
-#battery.plugged {
-    color: #EAF2F9;
+#custom-powermenu:hover {
+    color: #fab387; /* peach */
 }
 
-@keyframes blink {
-    to {
-        background-color: #ffffff;
-        color: #000000;
-    }
+/* --- Đồng hồ --- */
+#clock {
+    color: #b4befe; /* lavender */
+    font-weight: 600;
+}
+
+/* --- Pin --- */
+#battery {
+    color: #a6e3a1; /* green */
+}
+
+#battery.warning {
+    color: #f9e2af; /* yellow */
+}
+
+#battery.critical {
+    color: #f38ba8; /* red */
 }
 
 #battery.critical:not(.charging) {
-    background-color: #f53c3c;
-    color: #ffffff;
     animation-name: blink;
-    animation-duration: 0.5s;
-    animation-timing-function: linear;
+    animation-duration: 0.8s;
+    animation-timing-function: ease-in-out;
     animation-iteration-count: infinite;
     animation-direction: alternate;
 }
 
-label:focus {
-    background-color: #000000;
+#battery.charging,
+#battery.plugged {
+    color: #a6e3a1; /* green khi đang sạc */
+}
+
+@keyframes blink {
+    from { color: #f38ba8; }
+    to   { color: #fab387; }
+}
+
+/* --- Độ sáng --- */
+#backlight {
+    color: #f9e2af; /* yellow */
+}
+
+/* --- Mạng --- */
+#network {
+    color: #89b4fa; /* blue */
 }
 
 #network.disconnected {
-    background-color: #f53c3c;
+    color: #f38ba8; /* red */
+}
+
+/* --- Âm lượng --- */
+#pulseaudio {
+    color: #cba6f7; /* mauve */
+}
+
+#pulseaudio.muted {
+    color: #6c7086; /* overlay0 - xám khi tắt tiếng */
+}
+
+/* --- Bluetooth --- */
+#bluetooth {
+    color: #74c7ec; /* sapphire */
+}
+
+#bluetooth.off,
+#bluetooth.disabled {
+    color: #6c7086;
+}
+
+/* --- Ngôn ngữ bàn phím --- */
+#language {
+    color: #a6e3a1; /* green */
+}
+
+/* --- Nhiệt độ --- */
+#temperature {
+    color: #fab387; /* peach */
 }
 
 #temperature.critical {
-    background-color: #eb4d4b;
+    color: #f38ba8; /* red */
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
 }
 
+/* --- CPU --- */
+#cpu {
+    color: #89b4fa;
+}
+
+/* --- RAM --- */
+#memory {
+    color: #cba6f7;
+}
+
+/* --- Ổ đĩa --- */
+#disk {
+    color: #74c7ec;
+}
+
+/* --- Cái khay hệ thống (Tray) --- */
 #tray {
     background-color: transparent;
 }
 
-#tray>.passive {
+#tray > .passive {
     -gtk-icon-effect: dim;
 }
 
-#tray>.needs-attention {
+#tray > .needs-attention {
     -gtk-icon-effect: highlight;
-    background-color: #eb4d4b;
+    background-color: rgba(243, 139, 168, 0.3);
+    border-radius: 4px;
+}
+
+/* --- Chuông thông báo --- */
+#custom-notification {
+    color: #f9e2af; /* yellow */
+    font-size: 15px;
+}
+
+/* --- Cấm ngủ --- */
+#idle_inhibitor {
+    color: #6c7086; /* xám khi OFF */
+}
+
+#idle_inhibitor.activated {
+    color: #a6e3a1; /* xanh lá khi ON */
 }

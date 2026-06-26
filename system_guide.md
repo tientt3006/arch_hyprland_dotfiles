@@ -1,9 +1,3 @@
-# Hướng dẫn Tổng hợp Hệ thống Arch Linux + Hyprland
-
-> [!NOTE]
-> File này **chỉ chứa hướng dẫn**, không tự động thực hiện bất kỳ thay đổi nào. Bạn hãy đọc kỹ và tự thực hiện theo từng bước.
-
----
 
 ## Q1: Rofi có mở qua UWSM chưa? Các app mở qua Rofi thì sao?
 
@@ -173,11 +167,17 @@ Quay lại `qt6ct`:
 ### 1. Dán văn bản nhanh bằng chuột giữa (Primary Selection)
 - **Cách dùng:** Bôi đen (quét chọn) bất kỳ đoạn text nào → Nhấn **chuột giữa** (hoặc nhấn đồng thời chuột trái + phải trên touchpad) ở vị trí muốn dán → Text được dán ngay lập tức!
 - **Khác biệt:** Đây là clipboard thứ 2, độc lập với Ctrl+C/Ctrl+V. Bạn có thể dùng song song cả hai.
+- **Cuộn trang bằng chuột giữa (Autoscroll):**
+  - **Chrome/Brave:** Thêm dòng `--enable-blink-features=MiddleClickAutoscroll` vào file `~/.config/chrome-flags.conf`.
+  - **Firefox:** Vào *Settings → General → Browsing* → Tích chọn *Use autoscrolling*.
 
 ### 2. Workspace (Vùng làm việc ảo)
 - Hyprland có **10 workspace** (Super+1 đến Super+0). Mỗi workspace như một màn hình ảo riêng biệt.
-- **Di chuyển cửa sổ:** Super+Shift+[số] để ném cửa sổ sang workspace khác.
-- **Mẹo:** Dùng workspace 1 cho trình duyệt, workspace 2 cho code, workspace 3 cho terminal...
+- **Di chuyển 1 cửa sổ:** `Super + Shift + [số]` để ném cửa sổ đang chọn sang workspace khác.
+- **Tính năng mở rộng (Đã cấu hình thêm bằng script):**
+  - `Super + Alt + [số]`: Ném toàn bộ cửa sổ ở Workspace hiện tại sang Workspace đích.
+  - `Super + Shift + Alt + [số]`: Hoán đổi vị trí toàn bộ cửa sổ giữa Workspace hiện tại và Workspace đích.
+  - `Super + Shift + W`: Đóng ngay lập tức toàn bộ cửa sổ trên Workspace hiện tại.
 
 ### 3. Tiling Window Manager
 - Khác với Windows (cửa sổ chồng chéo), Hyprland tự động **sắp xếp cửa sổ lấp đầy màn hình**.
@@ -421,13 +421,39 @@ yay -Sua                 # Update AUR
 - Update kernel hoặc Nvidia driver → **Khởi động lại máy**.
 - Các update khác → Thường không cần restart.
 
-### Mẹo bảo trì
+### Mẹo bảo trì & Kiểm tra định kỳ
 ```bash
-du -sh /var/cache/pacman/pkg/   # Xem cache pacman
-sudo paccache -r                # Dọn cache (giữ 3 phiên bản)
-journalctl -p err -b            # Xem lỗi gần đây
+# ----- Dọn dẹp -----
+du -sh /var/cache/pacman/pkg/   # Xem dung lượng cache pacman
+# Nếu báo lỗi "command not found: paccache", hãy cài gói pacman-contrib: sudo pacman -S pacman-contrib
+sudo paccache -rk1              # Dọn cache gói cài đặt (giữ 1 phiên bản gần nhất)
+sudo pacman -Rns $(pacman -Qtdq) # Gỡ bỏ hoàn toàn các gói mồ côi (cài thừa)
+rm -rf ~/.cache/*               # Dọn sạch cache ứng dụng của người dùng (giải phóng nhiều GB)
+
+# ----- Kiểm tra hệ thống định kỳ -----
 df -h                           # Xem dung lượng ổ đĩa
+systemd-analyze blame | head    # Xem các tiến trình làm chậm quá trình khởi động máy
+systemctl --failed              # Kiểm tra xem có dịch vụ nào bị crash ngầm không
+systemctl list-timers           # Xem danh sách các tác vụ tự động (như fstrim) và lịch chạy tiếp theo
+journalctl -p err -b            # Xem log lỗi của hệ thống trong phiên làm việc hiện tại
 ```
+
+### Khởi động lại giao diện an toàn
+Nếu bạn đang chỉnh sửa cấu hình (như Waybar, Hyprland) và muốn áp dụng thay đổi hoặc bật lại app lỡ tay tắt, hãy dùng các lệnh sau trong Terminal:
+```bash
+# ----- Waybar (Thanh trạng thái) -----
+killall -SIGUSR2 waybar                       # Tải lại cấu hình Waybar (Mượt nhất, khuyên dùng)
+hyprctl dispatch exec "uwsm app -- waybar"    # Bật lại Waybar an toàn nếu nhỡ tay tắt hẳn
+
+# ----- Hyprland (Môi trường chung) -----
+# Lưu ý: Hyprland tự động cập nhật khi bạn Save file, nên hiếm khi cần lệnh này.
+hyprctl reload                                # Ép tải lại toàn bộ cấu hình lõi
+```
+
+### Tối ưu hóa hệ thống (Đã áp dụng)
+- **Tăng tốc biên dịch (Cài AUR siêu tốc):** Sửa `/etc/makepkg.conf`, kích hoạt `MAKEFLAGS="-j$(nproc)"` để bắt hệ thống dùng toàn bộ luồng CPU thay vì chỉ 1 luồng khi biên dịch các gói từ AUR.
+- **Khôi phục phím tìm kiếm lệnh cũ (Ctrl+R):** Khi bật chế độ Vi Mode trong Zsh (`bindkey -v`), `Ctrl+R` sẽ mất tác dụng. Đã thêm lệnh `bindkey '^R' history-incremental-search-backward` vào `~/.zshrc` để khôi phục tính năng này.
+- **Thanh trạng thái Waybar:** Đã thêm cấu hình CSS để tàng hình hoàn toàn các Workspace trống (fix lỗi hiển thị của Waybar).
 
 ---
 

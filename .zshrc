@@ -130,4 +130,6 @@ autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
 
 bindkey -v
+# Khôi phục lại Ctrl+R (tìm kiếm lịch sử) khi bật chế độ vim
+bindkey '^R' history-incremental-search-backward
 export KEYTIMEOUT=1

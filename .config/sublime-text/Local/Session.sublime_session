@@ -12,18 +12,18 @@
 	[
 	],
 	"last_version": 4200,
-	"last_window_id": 16,
+	"last_window_id": 17,
 	"log_indexing": false,
-	"next_update_check": 1782190513,
+	"next_update_check": 1782536113,
 	"settings":
 	{
 		"new_window_full_screen": false,
-		"new_window_height": 316.0,
+		"new_window_height": 510.0,
 		"new_window_maximized": true,
 		"new_window_position":
 		[
 			0.0,
-			27.0
+			28.0
 		],
 		"new_window_settings":
 		{
@@ -68,9 +68,9 @@
 			},
 			"file_history":
 			[
+				"/home/neitnd/.config/hypr/hyprland.conf",
 				"/home/neitnd/.zshrc",
 				"/home/neitnd/.config/kitty/kitty.conf",
-				"/home/neitnd/.config/hypr/hyprland.conf",
 				"/home/neitnd/.config/kitty/theme.conf"
 			],
 			"find":
@@ -178,42 +178,13 @@
 			"buffers":
 			[
 				{
-					"contents": "sdfghj",
+					"file": "/home/neitnd/.config/hypr/hyprland.conf",
 					"settings":
 					{
-						"buffer_size": 6,
-						"line_ending": "Unix",
-						"name": "sdfghj"
-					},
-					"undo_stack":
-					[
-						[
-							4,
-							1,
-							"",
-							null,
-							"AQAAAAAAAAAAAAAADAEAAAAAAAAAAAAA",
-							"DQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/"
-						],
-						[
-							9,
-							1,
-							"left_delete",
-							null,
-							"AQAAAAAAAAAAAAAAAAAAAAAAAAAuAQAAQ0hPT1NFPSQoZWNobyAtZSAiMS4gTeG7nyBj4butYSBz4buVIG3hu5tpIChOZXcgV2luZG93KVxuMi4gVGnhur9wIHThu6VjIGPhu61hIHPhu5UgY8WpIiB8IHJvZmkgLWRtZW51IC1wICJTdWJsaW1lIFRleHQgT3B0aW9uczoiKQoKaWYgWyAiJENIT09TRSIgPT0gIjEuIE3hu58gY+G7rWEgc+G7lSBt4bubaSAoTmV3IFdpbmRvdykiIF07IHRoZW4KICAgIHN1YmwgLS1sYXVuY2gtb3ItbmV3LXdpbmRvdwplbGlmIFsgIiRDSE9PU0UiID09ICIyLiBUaeG6v3AgdOG7pWMgY+G7rWEgc+G7lSBjxakiIF07IHRoZW4KICAgIHN1YmwKZmk",
-							"DQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAADAEAAAAAAAAAAAAAAAAAAAAAAAAAAPC/"
-						],
-						[
-							3,
-							1,
-							"insert",
-							{
-								"characters": "sdfghj"
-							},
-							"BgAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAACAAAAAAAAAAAAAAACAAAAAAAAAAMAAAAAAAAAAAAAAAMAAAAAAAAABAAAAAAAAAAAAAAABAAAAAAAAAAFAAAAAAAAAAAAAAAFAAAAAAAAAAYAAAAAAAAAAAAAAA",
-							"BgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvw"
-						]
-					]
+						"buffer_size": 8300,
+						"encoding": "UTF-8",
+						"line_ending": "Unix"
+					}
 				}
 			],
 			"build_system": "",
@@ -296,24 +267,24 @@
 					[
 						{
 							"buffer": 0,
+							"file": "/home/neitnd/.config/hypr/hyprland.conf",
 							"selected": true,
 							"semi_transient": false,
 							"settings":
 							{
-								"buffer_size": 6,
+								"buffer_size": 8300,
 								"regions":
 								{
 								},
 								"selection":
 								[
 									[
-										6,
-										6
+										0,
+										0
 									]
 								],
 								"settings":
 								{
-									"auto_name": "sdfghj",
 									"syntax": "Packages/Text/Plain text.tmLanguage",
 									"tab_size": 4,
 									"translate_tabs_to_spaces": true
@@ -368,7 +339,7 @@
 				]
 			},
 			"pinned_build_system": "",
-			"position": "0,1,0,0,0,0,0,583,306,1920,1080,0",
+			"position": "0,1,0,0,0,0,0,939,499,1920,1080,0",
 			"project": "",
 			"replace":
 			{
@@ -415,7 +386,7 @@
 			"template_settings":
 			{
 			},
-			"window_id": 1,
+			"window_id": 17,
 			"workspace_name": ""
 		}
 	],

@@ -23,8 +23,8 @@ Item {
         }
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        color: "#CDD6F4"
-        text: name
+        color: sessionList.currentIndex == index ? "#A6E3A1" : "#CDD6F4"
+        text: sessionList.currentIndex == index ? "✓ " + name : name
       }
       background: Rectangle {
         id: sessionEntryBackground

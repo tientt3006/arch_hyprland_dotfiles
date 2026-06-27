@@ -9,6 +9,7 @@ Item {
   property var session: sessionPanel.session
   property var inputHeight: Screen.height * 0.032
   property var inputWidth: Screen.width * 0.16
+  property int failCount: 0
   Rectangle {
     id: loginBackground
     anchors {
@@ -96,6 +97,8 @@ Item {
       width: parent.width
       enabled: user != "" && password != "" ? true : false
       hoverEnabled: true
+      scale: down ? 0.95 : 1.0
+      Behavior on scale { NumberAnimation { duration: 100 } }
       contentItem: Text {
         id: buttonText
         renderType: Text.NativeRendering
@@ -158,13 +161,27 @@ Item {
         sddm.login(user, password, session)
       }
     }
+    Text {
+      visible: failCount > 0
+      text: "Incorrect password. Failed attempts: " + failCount
+      color: "#F38BA8" // Catppuccin Red
+      font {
+        family: config.Font
+        pointSize: config.FontSize - 1
+        bold: true
+      }
+      horizontalAlignment: Text.AlignHCenter
+      width: parent.width
+    }
   }
   Connections {
     target: sddm
 
     function onLoginFailed() {
+      failCount += 1
       passwordField.text = ""
       passwordField.focus = true
+      passwordField.flashError()
     }
   }
 }

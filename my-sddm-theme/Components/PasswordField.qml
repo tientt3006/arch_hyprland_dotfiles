@@ -23,6 +23,26 @@ TextField {
     radius: 3
     color: "#313244"
   }
+  function flashError() {
+    errorAnim.start()
+  }
+
+  SequentialAnimation {
+    id: errorAnim
+    ColorAnimation {
+      target: passFieldBackground
+      property: "color"
+      to: "#F38BA8" // Catppuccin Red
+      duration: 150
+    }
+    ColorAnimation {
+      target: passFieldBackground
+      property: "color"
+      to: passwordField.activeFocus ? "#45475A" : "#313244"
+      duration: 200
+    }
+  }
+
   states: [
     State {
       name: "focused"

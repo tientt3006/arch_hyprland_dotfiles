@@ -377,18 +377,20 @@ EndSection
 EOF'
 ```
 
-### Install Catppuccin Theme
+### Install Custom SDDM Theme
+We use a customized version of the Catppuccin theme (with a dropdown user selector and repositioned buttons) which is included in this repository.
+
+Copy it to the system themes directory:
 ```bash
-sudo mkdir -p /usr/share/sddm/themes
-sudo git clone -b main https://github.com/catppuccin/sddm.git /usr/share/sddm/themes/catppuccin-mocha
+sudo cp -r ~/neitnd_dotfiles/my-sddm-theme /usr/share/sddm/themes/
 ```
 
 ### Configure SDDM
-Edit `/etc/sddm.conf` to use the theme:
+Edit `/etc/sddm.conf` to use the custom theme:
 ```bash
 sudo bash -c 'cat << EOF > /etc/sddm.conf
 [Theme]
-Current=catppuccin-mocha/src/catppuccin-mocha
+Current=my-sddm-theme
 EOF'
 ```
 
@@ -946,6 +948,13 @@ SOUND_POWER_SAVE_ON_BAT=0
 ```
 Reload: `sudo tlp start`
 
+### Prevent Platform Profile Auto-Switching
+TLP may forcefully switch your laptop's platform profile (fan speed/power mode) to `performance` on AC and `balanced` on battery, overriding your manual `Fn+Q` settings. Prevent this by forcing it to `balanced`:
+```bash
+sudo bash -c 'echo -e "PLATFORM_PROFILE_ON_AC=balanced\nPLATFORM_PROFILE_ON_BAT=balanced" > /etc/tlp.d/99-platform-profile.conf'
+sudo tlp start
+```
+
 ## 8.2. Install Intel Vulkan Driver
 
 On hybrid NVIDIA+Intel laptops, apps that use Vulkan rendering (like SwayNC) will default to the NVIDIA GPU if no Intel Vulkan driver is installed — wasting battery and causing stutter.
@@ -1156,6 +1165,7 @@ du -sh /var/cache/pacman/pkg/       # View pacman cache size
 sudo paccache -rk1                  # Keep only 1 version of each cached package
 sudo pacman -Rns $(pacman -Qtdq)    # Remove orphan packages
 rm -rf ~/.cache/*                   # Clear user application caches
+sudo journalctl --vacuum-size=50M   # 4. Clear old system logs (keep 50MB)
 
 # ----- System Health -----
 df -h                               # Check disk space
@@ -1234,6 +1244,30 @@ sudo cp /boot/EFI/refind/refind_x64.efi /boot/EFI/BOOT/BOOTX64.EFI
    monitor = , preferred, auto, 1
    source = ~/.config/hypr/monitors.conf
    ```
+
+## 10.8. Disk Space Management
+
+If your disk is filling up, do not use third-party cleaner apps. Use the built-in commands or dedicated Linux tools.
+
+### Analyze Disk Usage (TreeSize alternatives)
+- **`ncdu`** (Terminal): Extremely fast TUI disk usage analyzer.
+  ```bash
+  yay -S ncdu
+  sudo ncdu /         # Scan entire system
+  sudo ncdu -x /      # Scan entire system without vitual folder
+
+  ncdu ~              # Scan home folder
+  ```
+- **`baobab`** (GUI): GNOME Disk Usage Analyzer for visual pie charts.
+  ```bash
+  yay -S baobab
+  ```
+
+### Reclaim Disk Space
+In addition to clearing the pacman cache (`paccache`) and user cache (`~/.cache/`) mentioned in section 10.3, you can clean up the systemd journal logs, which can grow to several gigabytes over time:
+```bash
+sudo journalctl --vacuum-size=50M    # Keep only the latest 50MB of logs
+```
 
 ---
 

@@ -1,112 +1,17 @@
-/* ================================================
-   SwayNC Style - Catppuccin Mocha
-   ================================================ */
+/* =====================================================
+   SwayNC Style — Catppuccin Mocha Blue
+   ===================================================== */
 
+/* --- Base font --- */
 * {
-    font-family: "JetBrainsMono Nerd Font", "Noto Sans", sans-serif;
+    font-family: "JetBrainsMono Nerd Font", "Noto Sans CJK SC", sans-serif;
     font-size: 13px;
+    transition: all 0.15s ease;
 }
 
-/* ---- Notification Popup ---- */
-.notification-row:focus,
-.notification-row:hover {
-    background: transparent;
-}
-
-.notification-row {
-    outline: none;
-    margin: 0;
-    padding: 0;
-}
-
-.notification {
-    background: rgba(30, 30, 46, 0.92);
-    border-radius: 12px;
-    border: 1px solid rgba(137, 180, 250, 0.3);
-    margin: 6px 12px;
-    padding: 0;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-}
-
-.notification:hover {
-    background: rgba(49, 50, 68, 0.95);
-    border-color: rgba(137, 180, 250, 0.6);
-}
-
-.notification-content {
-    background: transparent;
-    padding: 14px;
-    border-radius: 12px;
-    color: #cdd6f4;
-}
-
-.summary {
-    font-weight: bold;
-    font-size: 14px;
-    color: #cdd6f4;
-}
-
-.body {
-    color: #a6adc8;
-    font-size: 12px;
-    margin-top: 2px;
-}
-
-.close-button {
-    background: rgba(243, 139, 168, 0.15);
-    color: #f38ba8;
-    text-shadow: none;
-    padding: 0;
-    border-radius: 8px;
-    box-shadow: none;
-    border: 1px solid rgba(243, 139, 168, 0.3);
-    min-width: 22px;
-    min-height: 22px;
-    margin: 10px;
-    font-size: 11px;
-}
-
-.close-button:hover {
-    background: #f38ba8;
-    color: #1e1e2e;
-    border-color: #f38ba8;
-}
-
-.notification-default-action,
-.notification-action {
-    padding: 6px 14px;
-    margin: 4px;
-    box-shadow: none;
-    background: rgba(137, 180, 250, 0.1);
-    border: 1px solid rgba(137, 180, 250, 0.3);
-    border-radius: 8px;
-    color: #89b4fa;
-    font-size: 12px;
-}
-
-.notification-default-action:hover,
-.notification-action:hover {
-    background: rgba(137, 180, 250, 0.25);
-    border-color: #89b4fa;
-    color: #cdd6f4;
-}
-
-/* ---- Control Center ---- */
-.control-center {
-    background: rgba(24, 24, 37, 0.95);
-    border: 1px solid rgba(137, 180, 250, 0.2);
-    border-radius: 16px;
-    padding: 4px;
-}
-
-.control-center-list {
-    background: transparent;
-}
-
-.control-center-list-placeholder {
-    opacity: 0.4;
-    color: #6c7086;
-}
+/* =====================================================
+   NOTIFICATION POPUP (Bong bóng thông báo)
+   ===================================================== */
 
 .floating-notifications {
     background: transparent;
@@ -116,20 +21,182 @@
     background: transparent;
 }
 
-/* ---- Widget: Title / Header ---- */
-.widget-title {
-    color: #cdd6f4;
-    background: transparent;
-    padding: 10px 16px 6px 16px;
-    font-size: 15px;
-    font-weight: bold;
+.notification-row {
+    outline: none;
+    margin: 0;
+    padding: 0;
 }
 
-.widget-title > button {
+.notification-row:focus,
+.notification-row:hover {
+    background: transparent;
+}
+
+/* Card thông báo */
+.notification {
+    background: rgba(24, 24, 37, 0.93);
+    border-radius: 14px;
+    border: 1px solid rgba(137, 180, 250, 0.25);
+    margin: 5px 10px;
+    padding: 0;
+    box-shadow:
+        0 4px 24px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.notification:hover {
+    background: rgba(30, 30, 46, 0.97);
+    border-color: rgba(137, 180, 250, 0.5);
+    box-shadow:
+        0 6px 28px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+/* Nội dung bên trong card */
+.notification-content {
+    background: transparent;
+    padding: 12px 14px;
+    border-radius: 14px;
+    color: #cdd6f4;
+}
+
+/* Icon của App gửi thông báo */
+.notification-default-action {
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 14px;
+}
+
+.notification-default-action:hover {
+    background: rgba(137, 180, 250, 0.06);
+    border-radius: 14px;
+}
+
+/* Tiêu đề thông báo */
+.summary {
+    font-weight: 700;
+    font-size: 13px;
+    color: #cdd6f4;
+    text-shadow: none;
+}
+
+/* Nội dung thông báo */
+.body {
+    color: #a6adc8;
     font-size: 12px;
+    margin-top: 3px;
+    line-height: 1.4;
+}
+
+/* Tên ứng dụng gửi thông báo */
+.app-name {
+    font-size: 11px;
+    color: #6c7086;
+    font-weight: 500;
+}
+
+/* Thời gian thông báo */
+.time {
+    font-size: 11px;
+    color: #585b70;
+}
+
+/* Nút đóng (×) */
+.close-button {
+    background: rgba(243, 139, 168, 0.1);
+    color: #f38ba8;
+    text-shadow: none;
+    padding: 2px 4px;
+    border-radius: 8px;
+    box-shadow: none;
+    border: 1px solid rgba(243, 139, 168, 0.2);
+    min-width: 20px;
+    min-height: 20px;
+    margin: 8px 8px 8px 4px;
+    font-size: 10px;
+}
+
+.close-button:hover {
+    background: #f38ba8;
+    color: #1e1e2e;
+    border-color: #f38ba8;
+}
+
+/* Các nút hành động (action buttons) */
+.notification-action {
+    padding: 5px 12px;
+    margin: 4px 4px 8px 4px;
+    box-shadow: none;
+    background: rgba(49, 50, 68, 0.6);
+    border: 1px solid rgba(137, 180, 250, 0.2);
+    border-radius: 8px;
+    color: #89b4fa;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.notification-action:hover {
+    background: rgba(137, 180, 250, 0.18);
+    border-color: rgba(137, 180, 250, 0.5);
+    color: #cdd6f4;
+}
+
+/* Màu sắc theo mức độ ưu tiên */
+.low    { border-color: rgba(137, 180, 250, 0.18); }
+.normal { border-color: rgba(137, 180, 250, 0.25); }
+.critical {
+    border-color: rgba(243, 139, 168, 0.65);
+    background: rgba(243, 139, 168, 0.07);
+    box-shadow: 0 0 14px rgba(243, 139, 168, 0.18);
+}
+
+/* =====================================================
+   CONTROL CENTER (Bảng Trung tâm thông báo)
+   ===================================================== */
+
+.control-center {
+    background: rgba(17, 17, 27, 0.96);
+    border: 1px solid rgba(137, 180, 250, 0.18);
+    border-radius: 18px;
+    padding: 6px;
+    box-shadow:
+        0 8px 40px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.control-center-list {
+    background: transparent;
+}
+
+.control-center-list-placeholder {
+    opacity: 0.4;
+    color: #6c7086;
+    font-size: 13px;
+}
+
+/* =====================================================
+   WIDGET: TIÊU ĐỀ
+   ===================================================== */
+
+.widget-title {
+    color: #89b4fa;
+    background: transparent;
+    padding: 12px 16px 8px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+/* Nút "Xóa hết" */
+.widget-title > button {
+    font-size: 11px;
+    font-weight: 600;
     color: #1e1e2e;
     text-shadow: none;
-    background: #89b4fa;
+    background: rgba(137, 180, 250, 0.8);
     border: none;
     box-shadow: none;
     border-radius: 8px;
@@ -137,25 +204,28 @@
 }
 
 .widget-title > button:hover {
-    background: #b4befe;
+    background: #89b4fa;
     color: #1e1e2e;
 }
 
-/* ---- Widget: Do Not Disturb toggle ---- */
+/* =====================================================
+   WIDGET: DO NOT DISTURB
+   ===================================================== */
+
 .widget-dnd {
-    background: rgba(49, 50, 68, 0.5);
+    background: rgba(30, 30, 46, 0.5);
     padding: 8px 16px;
-    margin: 4px 8px;
-    border-radius: 10px;
+    margin: 2px 6px 6px 6px;
+    border-radius: 12px;
     font-size: 13px;
-    color: #cdd6f4;
-    border: 1px solid rgba(255,255,255,0.06);
+    color: #a6adc8;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .widget-dnd > switch {
     border-radius: 14px;
-    background: #45475a;
-    border: 1px solid #585b70;
+    background: #313244;
+    border: 1px solid #45475a;
 }
 
 .widget-dnd > switch:checked {
@@ -166,11 +236,7 @@
 .widget-dnd > switch slider {
     background: #cdd6f4;
     border-radius: 12px;
-    min-height: 16px;
-    min-width: 16px;
+    min-height: 14px;
+    min-width: 14px;
+    margin: 2px;
 }
-
-/* ---- Urgency colors ---- */
-.low  { border-color: rgba(137, 180, 250, 0.3); }
-.normal { border-color: rgba(137, 180, 250, 0.3); }
-.critical { border-color: rgba(243, 139, 168, 0.7); background: rgba(243, 139, 168, 0.08); }

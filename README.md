@@ -16,7 +16,7 @@ Hyprland rice on Arch Linux with **Catppuccin Mocha Blue** theming.
 |---|---|
 | Window Manager | [Hyprland](https://hyprland.org/) (Wayland) |
 | Session Manager | [UWSM](https://github.com/Vladimir-csp/uwsm) (systemd-managed) |
-| Display Manager | [Greetd](https://sr.ht/~kennylevinsen/greetd/) + [tuigreet](https://github.com/apognu/tuigreet) |
+| Display Manager | [SDDM](https://github.com/sddm/sddm) (X11, Intel only) |
 | Status Bar | [Waybar](https://github.com/Alexays/Waybar) |
 | Notifications | [SwayNC](https://github.com/ErikReider/SwayNotificationCenter) |
 | App Launcher | [Rofi (Wayland)](https://github.com/lbonn/rofi) |
@@ -90,8 +90,8 @@ These files live outside `$HOME` and must be configured manually:
 
 | File | Purpose |
 |---|---|
-| `/etc/greetd/config.toml` | Greetd — launches tuigreet → Hyprland via UWSM |
-| `/etc/pam.d/greetd` | PAM — auto-unlock GNOME Keyring on login |
+| `/etc/X11/xorg.conf.d/10-intel-sddm.conf` | Xorg — force Intel GPU to keep NVIDIA asleep |
+| `/etc/sddm.conf` | SDDM — enable Catppuccin Mocha theme |
 | `/etc/tlp.conf` | TLP — USB autosuspend off, audio power save off |
 | `/etc/mkinitcpio.conf` | Initramfs — NVIDIA modules |
 | `/boot/refind_linux.conf` | rEFInd bootloader — kernel params |
@@ -101,7 +101,7 @@ These files live outside `$HOME` and must be configured manually:
 
 This setup aggressively minimizes NVIDIA dGPU wake-ups on hybrid laptops:
 
-- **Greetd (TUI)** replaces SDDM — no X11 at the login screen, NVIDIA stays at 0W.
+- **SDDM on X11** is configured to explicitly ignore the NVIDIA GPU (`AutoAddGPU false`), keeping it at 0W.
 - **`vulkan-intel`** is installed so Vulkan apps default to Intel instead of waking NVIDIA.
 - **SwayNC** is forced onto Intel via a systemd override (`DRI_PRIME=0` + EGL + Vulkan env vars).
 - **TLP** auto-suspends PCI, Wi-Fi, and SSD while keeping USB (mouse) and audio always on.

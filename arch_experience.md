@@ -10,7 +10,7 @@
 
 1. [Part 1: Base Installation](#part-1-base-installation)
 2. [Part 2: NVIDIA Driver & Secure Boot](#part-2-nvidia-driver--secure-boot)
-3. [Part 3: Desktop Environment (Hyprland + UWSM + Greetd)](#part-3-desktop-environment-hyprland--uwsm--greetd)
+3. [Part 3: Desktop Environment (Hyprland + UWSM + SDDM)](#part-3-desktop-environment-hyprland--uwsm--sddm)
 4. [Part 4: Audio, Multimedia & Bluetooth](#part-4-audio-multimedia--bluetooth)
 5. [Part 5: Tools & Utilities](#part-5-tools--utilities)
 6. [Part 6: Theming (Catppuccin Mocha)](#part-6-theming-catppuccin-mocha)
@@ -259,7 +259,7 @@ Reboot → BIOS → *Security* → *Secure Boot* → **Enabled** → `F10` to sa
 
 ---
 
-# Part 3: Desktop Environment (Hyprland + UWSM + Greetd)
+# Part 3: Desktop Environment (Hyprland + UWSM + SDDM)
 
 ## 3.1. Install Hyprland & Related Packages
 
@@ -351,41 +351,50 @@ bind = SUPER, M, exit
 EOF
 ```
 
-## 3.4. Display Manager: Greetd + Tuigreet
+## 3.4. Display Manager: SDDM (X11 with Intel Only)
 
-Greetd with tuigreet replaces SDDM entirely. It runs in pure TUI mode (no X11), which means the NVIDIA GPU stays completely powered off (0W) at the login screen — a significant battery saving on hybrid laptops.
+SDDM is used with the Catppuccin Mocha theme for a beautiful, auto-focused login screen. To ensure SDDM's X11 server does not wake the NVIDIA GPU (which saves battery), we explicitly configure Xorg to only see the Intel GPU.
 
 ### Install
 ```bash
-yay -S greetd greetd-tuigreet
+yay -S sddm xorg-server qt5-graphicaleffects qt5-quickcontrols2 qt5-svg
 ```
 
-### Configure — Auto-launch Hyprland via UWSM
-Edit `/etc/greetd/config.toml`:
-```toml
-[terminal]
-# Run the greeter on TTY1
-vt = 1
+### Configure Xorg (Force Intel GPU)
+Create a config to block NVIDIA and use the Intel device:
+```bash
+sudo mkdir -p /etc/X11/xorg.conf.d
+sudo bash -c 'cat << EOF > /etc/X11/xorg.conf.d/10-intel-sddm.conf
+Section "ServerFlags"
+    Option "AutoAddGPU" "false"
+EndSection
 
-[default_session]
-# --time: show clock, --remember: remember last user, --cmd: launch Hyprland via UWSM
-command = "tuigreet --time --remember --cmd 'uwsm start hyprland-uwsm.desktop'"
-# Run the greeter process under the dedicated "greeter" user
-user = "greeter"
+Section "Device"
+    Identifier  "Intel Graphics"
+    Driver      "modesetting"
+    BusID       "PCI:0:2:0"
+EndSection
+EOF'
 ```
 
-### Configure GNOME Keyring Auto-Unlock
-Without this, Chrome/Coc Coc will prompt you for the keyring password on every launch.
+### Install Catppuccin Theme
+```bash
+sudo mkdir -p /usr/share/sddm/themes
+sudo git clone -b main https://github.com/catppuccin/sddm.git /usr/share/sddm/themes/catppuccin-mocha
+```
 
-Append two lines to the end of `/etc/pam.d/greetd`:
-```text
-auth optional pam_gnome_keyring.so
-session optional pam_gnome_keyring.so auto_start
+### Configure SDDM
+Edit `/etc/sddm.conf` to use the theme:
+```bash
+sudo bash -c 'cat << EOF > /etc/sddm.conf
+[Theme]
+Current=catppuccin-mocha/src/catppuccin-mocha
+EOF'
 ```
 
 ### Enable the Service
 ```bash
-sudo systemctl enable greetd.service
+sudo systemctl enable sddm.service
 ```
 
 > **GNOME Keyring management:** Install `seahorse` (`sudo pacman -S seahorse`) for a GUI to view, edit, or delete stored passwords. If you change your Linux login password, you must also update the keyring password inside Seahorse.

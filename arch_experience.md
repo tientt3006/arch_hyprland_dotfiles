@@ -661,9 +661,29 @@ A custom script at `~/.config/hypr/scripts/rofi-finder.sh` provides a fast file 
 | `Alt + T` | **Open terminal here** | Opens Kitty in the file's directory |
 | `Alt + E` | **Open in editor** | Opens Neovim for quick editing |
 
-## 5.8. Live Grep (Super + Shift + G)
+## 5.8. Super Live Grep (Super + Shift + G)
 
-Searches inside file contents in real time using `ripgrep`. Useful when you know what a file contains but not its name.
+Searches inside file contents in real time using `ripgrep` and `fzf` via a 4-Stage Wizard. Useful when you know what a file contains but not its name.
+Features:
+- Toggle support (Press `Super + Shift + G` to open, and again to close).
+- Step 1: Select root directory (ignores system caches by default but allows searching in `.config`).
+- Step 2: Multi-select specific file types (`conf`, `lua`, `python`, etc.).
+- Step 3: Smart ignore toggles.
+- Step 4: Live search with syntax-highlighted preview (`bat`).
+
+### Adding Custom Ignores / File Types
+The script is located at `~/.config/hypr/scripts/live-grep.sh`.
+If you encounter massive unneeded folders in the future (e.g., Docker volumes, Android Studio caches), you should manually add them to the script to keep Live Grep lightning fast.
+
+**To add a new hard-ignored folder:**
+1. Open `~/.config/hypr/scripts/live-grep.sh`.
+2. Find the variable `RG_IGNORE_OPTS` inside the `# Bỏ qua các rác hệ thống vĩnh viễn` section.
+3. Append `-g '!.tên_thư_mục/*'` to the string.
+   *(Suggestions for future ignores if you install them: `!.android/*`, `!.npm/*`, `!.java/*`, `!.gradle/*`, `!.docker/*`)*
+
+**To add a new File Type option:**
+1. Find the `TYPE_SELECTION` variable.
+2. Add your extension to the echo string (e.g., `\nphp` or `\nxml`).
 
 ## 5.9. Dotfile Management with Stow
 

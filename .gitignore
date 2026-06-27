@@ -38,3 +38,6 @@
 
 # Thunar state/bookmark tự sinh
 .config/Thunar/accels.scm
+
+# Thư mục chứa tài liệu tạm thời
+temp_docs/

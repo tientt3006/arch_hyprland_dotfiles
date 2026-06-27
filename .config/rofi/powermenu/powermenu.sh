@@ -34,7 +34,7 @@ rofi_cmd() {
 confirm_cmd() {
 	rofi -theme-str 'window {location: center; anchor: center; fullscreen: false; width: 350px;}' \
 		-theme-str 'mainbox {children: [ "message", "listview" ];}' \
-		-theme-str 'listview {columns: 2; lines: 1;}' \
+		-theme-str 'listview {columns: 1; lines: 2;}' \
 		-theme-str 'element-text {horizontal-align: 0.5; font: "JetBrainsMono Nerd Font 13";}' \
 		-theme-str 'textbox {horizontal-align: 0.5;}' \
 		-dmenu \

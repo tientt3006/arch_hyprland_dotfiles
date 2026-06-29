@@ -837,7 +837,7 @@ Mounts Google Drive directly into your file manager without taking up local disk
    [Service]
    Type=simple
    ExecStart=/usr/bin/rclone mount gdrive: %h/GDrive --drive-root-folder-id "YOUR_FOLDER_ID" --vfs-cache-mode full
-   ExecStop=/bin/fusermount -u %h/GDrive
+   ExecStop=/bin/fusermount3 -u %h/GDrive
    Restart=on-failure
    RestartSec=5
 

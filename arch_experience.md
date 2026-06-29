@@ -748,6 +748,140 @@ sudo pacman -S dnsmasq hostapd
 - **IdeaPad Gaming 3 limitation:** Only `channel <= 1` → set the hotspot channel to match the channel of the Wi-Fi network you are already connected to.
 - View current channel: `nmcli device wifi`
 
+## 5.11. Cloud Storage Sync (OneDrive & Google Drive)
+
+> **Dual-Boot Warning:** Never point Linux sync clients directly to the existing NTFS Windows sync folder. Due to independent database states and file system metadata differences (ext4 vs NTFS), this can cause severe data loss, conflict loops, or duplicate files. Always use separate local sync folders for Linux.
+
+### OneDrive (abraunegg's client)
+The ultimate 2-way offline sync daemon for OneDrive on Linux.
+
+1. **Install & Authenticate:**
+   ```bash
+   yay -S onedrive-abraunegg
+   onedrive
+   ```
+   *Follow the prompts to sign in and paste the redirect URL.*
+
+2. **Selective Sync (Optional):**
+   ```bash
+   mkdir -p ~/.config/onedrive
+   nano ~/.config/onedrive/sync_list
+   ```
+   Example for sync_list (root folders):
+  ```bash
+  Documents
+  Music
+  Pictures
+  Videos
+  ```
+3. **Resync & Enable Daemon:**
+   ```bash
+   onedrive --sync --resync
+   systemctl --user enable --now onedrive
+   ```
+
+### Google Drive (Rclone)
+Rclone is extremely powerful but requires manual setup. You can choose to either **Mount as a Network Drive** (saves space, requires internet) or use **2-Way Offline Sync** (acts like OneDrive).
+
+#### 1. Generate Google Cloud Credentials (Client ID & Secret)
+To avoid rate limits and connection issues, you must create your own Google API project.
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/). Create a new project.
+2. Search for "Google Drive API" and click **Enable**.
+3. **OAuth Consent Screen (Branding):**
+   - Click *OAuth consent screen* on the left menu.
+   - User Type: *External*.
+   - App name: `rclone`, User support email: *your email*, Developer contact: *your email*.
+   - Click *Save and Continue*.
+4. **Test Users (Audience):**
+   - Click *Add Users* and enter your exact Google Drive email address.
+   - **CRITICAL:** To prevent the token from expiring every 7 days, click **PUBLISH APP** on the OAuth consent screen. (Ignore Google's verification warnings since you are the only user).
+5. **Data Access (Scopes):**
+   - Click *Add or Remove Scopes*.
+   - Select the scope with `.../auth/drive` (Full access to all files).
+   - Click *Update* then *Save and Continue*.
+6. **Create Credentials (Clients):**
+   - Go to *Credentials* on the left menu.
+   - Click *+ CREATE CREDENTIALS* → *OAuth client ID*.
+   - Application type: *Desktop app*.
+   - Click *Create*. Copy the generated **Client ID** and **Client Secret**.
+
+#### 2. Configure Rclone
+```bash
+sudo pacman -S rclone
+rclone config
+```
+Follow the interactive prompts:
+- `n` (New remote) → name it `gdrive`.
+- Type the number for Google Drive (usually `18` or `19` or `24`).
+- **client_id:** Paste your Client ID here.
+- **client_secret:** Paste your Client Secret here.
+- **scope:** `1` (Full access).
+- Leave `service_account_file` and advanced config blank (press Enter).
+- **Use web browser to automatically authenticate:** `y`. Log in to your Google account and grant permission.
+- **Configure this as a Shared Drive:** `n`.
+- Finally, type `y` to confirm and `q` to quit.
+
+#### Option A: Network Mount (Space Saving)
+Mounts Google Drive directly into your file manager without taking up local disk space.
+1. Create a systemd service to auto-mount on boot:
+   ```bash
+   mkdir -p ~/.config/systemd/user/
+   nano ~/.config/systemd/user/rclone-gdrive.service
+   ```
+2. Add the following (if targeting a specific folder in the "Computers" tab, use its Folder ID from the web URL; you need to create GDrive/ folder):
+   ```ini
+   [Unit]
+   Description=Rclone Mount Google Drive
+   After=network-online.target
+
+   [Service]
+   Type=simple
+   ExecStart=/usr/bin/rclone mount gdrive: %h/GDrive --drive-root-folder-id "YOUR_FOLDER_ID" --vfs-cache-mode full
+   ExecStop=/bin/fusermount -u %h/GDrive
+   Restart=on-failure
+   RestartSec=5
+
+   [Install]
+   WantedBy=default.target
+   ```
+3. Enable and start the service:
+   ```bash
+   systemctl --user daemon-reload
+   systemctl --user enable --now rclone-gdrive.service
+   ```
+
+#### Option B: Offline 2-Way Sync (Like OneDrive)
+Use `rclone bisync` coupled with a systemd timer. **Do not run this on a folder that is currently mounted!**
+1. **First Sync (Resync):**
+   ```bash
+   rclone bisync gdrive: ~/GDrive_Offline --drive-root-folder-id "YOUR_FOLDER_ID" --resync -v
+   ```
+2. **Automate via Systemd Timer (Every 5 minutes):**
+   Create `~/.config/systemd/user/rclone-bisync.service`:
+   ```ini
+   [Unit]
+   Description=Rclone 2-way Sync for Google Drive
+   [Service]
+   Type=oneshot
+   ExecStart=/usr/bin/rclone bisync gdrive: %h/GDrive_Offline --drive-root-folder-id "YOUR_FOLDER_ID" -q
+   ```
+   Create `~/.config/systemd/user/rclone-bisync.timer`:
+   ```ini
+   [Unit]
+   Description=Run Rclone Bisync every 5 minutes
+   [Timer]
+   OnBootSec=1min
+   OnUnitActiveSec=5min
+   Unit=rclone-bisync.service
+   [Install]
+   WantedBy=timers.target
+   ```
+3. Enable it:
+   ```bash
+   systemctl --user daemon-reload
+   systemctl --user enable --now rclone-bisync.timer
+   ```
+
 ---
 
 # Part 6: Theming (Catppuccin Mocha)

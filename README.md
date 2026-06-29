@@ -29,6 +29,7 @@ Hyprland rice on Arch Linux with **Catppuccin Mocha Blue** theming.
 | Audio | PipeWire + [EasyEffects](https://github.com/wwmm/easyeffects) |
 | Input Method | [Fcitx5](https://fcitx-im.org/) + Bamboo (Vietnamese) |
 | Power Management | [TLP](https://linrunner.de/tlp/) |
+| Cloud Sync | [OneDrive client](https://github.com/abraunegg/onedrive) & [Rclone](https://rclone.org/) |
 
 ## Structure
 
@@ -55,6 +56,8 @@ neitnd_dotfiles/
 │   ├── rustdesk/           # Remote desktop settings
 │   ├── sublime-text/       # Sublime Text preferences
 │   ├── xdg-desktop-portal/ # Portal priority config (Hyprland > GTK)
+│   ├── onedrive/           # Selective sync configuration (sync_list)
+│   ├── systemd/user/       # Auto-sync timers (Rclone bisync)
 │   ├── chrome-flags.conf   # Chrome flags (middle-click scroll, Ozone/Wayland)
 │   └── mimeapps.list       # Default applications for file types
 ├── .local/

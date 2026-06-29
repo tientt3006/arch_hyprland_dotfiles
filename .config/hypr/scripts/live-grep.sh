@@ -119,7 +119,7 @@ SELECTED=$(
         --bind "change:reload:sleep 0.1; $RG_PREFIX {q} '$SEARCH_DIR' 2>/dev/null || true" \
         --delimiter : \
         --preview 'bat --style=numbers --color=always {1} --highlight-line {2} 2>/dev/null || cat {1}' \
-        --preview-window 'right,60%,border-left,+{2}+3/3,~3' \
+        --preview-window 'right,60%,border-left,wrap,+{2}+3/3,~3' \
         --prompt "4/4. Live Grep> " \
         --info inline
 )

@@ -671,6 +671,8 @@ Features:
 - Step 3: Smart ignore toggles.
 - Step 4: Live search with syntax-highlighted preview (`bat`).
 
+Hold SHIFT to use mouse and copy in that interface (kitty)
+
 ### Adding Custom Ignores / File Types
 The script is located at `~/.config/hypr/scripts/live-grep.sh`.
 If you encounter massive unneeded folders in the future (e.g., Docker volumes, Android Studio caches), you should manually add them to the script to keep Live Grep lightning fast.

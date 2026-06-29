@@ -73,7 +73,11 @@
         }
     },
     "custom/launcher": {
-        "format": "",
+        // "format": "", // arch logo
+        // "format": "󰀻", // app logo
+        "format": "󰍜", // menu logo
+        // "format": "󰄛", // cat face logo
+        // "format": "", // cat logo
         "on-click": "uwsm app -- rofi -show drun -theme $HOME/.config/rofi/config.rasi",
         "tooltip": true,
         "tooltip-format": "App Launcher"

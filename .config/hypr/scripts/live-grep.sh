@@ -127,4 +127,17 @@ SELECTED=$(
 [ -z "$SELECTED" ] && exit 0
 
 FILE=$(echo "$SELECTED" | cut -d: -f1)
-gio open "$FILE"
+LINE=$(echo "$SELECTED" | cut -d: -f2)
+COL=$(echo "$SELECTED" | cut -d: -f3)
+
+# Sử dụng hyprctl dispatch exec để mở cửa sổ hoàn toàn độc lập với script hiện tại
+# 1. Neovim (Siêu nhẹ, cực nhanh, nhảy đúng số dòng)
+if command -v nvim &> /dev/null; then
+    hyprctl dispatch exec "kitty -e nvim \"+call cursor($LINE, $COL)\" \"$FILE\""
+# 2. Hệ thống mặc định (File txt/md thường mở Text Editor)
+elif command -v gio &> /dev/null; then
+    hyprctl dispatch exec "gio open \"$FILE\""
+# 3. Fallback VS Code
+elif command -v code &> /dev/null; then
+    hyprctl dispatch exec "code -g \"$FILE:$LINE:$COL\""
+fi

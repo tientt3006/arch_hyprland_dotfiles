@@ -11,12 +11,14 @@
         // "custom/separator",
         "hyprland/workspaces",
         "custom/separator",
-        "hyprland/window"
+        "custom/launcher",
+        "wlr/taskbar"
+        // "hyprland/window"
     ],
     "modules-center": [
-        "custom/launcher"
+        // "custom/launcher"
         // "network"
-        // "hyprland/window"
+        "hyprland/window"
     ],
     "modules-right": [
         // "temperature",
@@ -71,6 +73,15 @@
         "rewrite": {
             "(.*) - Kitty": "$1"
         }
+    },
+    "wlr/taskbar": {
+        "format": "{icon}",
+        "icon-size": 18,
+        "icon-theme": "Papirus", // Gợi ý bộ icon nếu có
+        "tooltip-format": "{title}",
+        "on-click": "activate",
+        "on-click-middle": "close",
+        "ignore-list": []
     },
     "custom/launcher": {
         // "format": "", // arch logo

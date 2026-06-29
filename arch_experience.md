@@ -881,7 +881,11 @@ Use `rclone bisync` coupled with a systemd timer. **Do not run this on a folder 
    systemctl --user daemon-reload
    systemctl --user enable --now rclone-bisync.timer
    ```
-
+## 5.12. Default app for picture, audio, video, pdf, text,..
+picture: imv
+video and audio: mpv
+pdf: browser
+text: nvim, sublimetext
 ---
 
 # Part 6: Theming (Catppuccin Mocha)
@@ -1620,3 +1624,30 @@ return {
 ### Usage Guide
 For a quick reference on how to navigate files, use LSP features, and manage plugins within LazyVim, refer to the:
 **👉 [LazyVim Basic Usage Guide](arch_experience_assets/lazyvim_guide.md)**
+
+## Development Environment
+
+### Docker & Docker Compose
+To set up Docker on Arch Linux:
+
+1. **Install packages:**
+```bash
+sudo pacman -S docker docker-compose
+```
+
+2. **Enable and start the service:**
+```bash
+sudo systemctl enable --now docker.service
+```
+
+3. **Add your user to the Docker group** (so you don't need `sudo` for every command):
+```bash
+sudo usermod -aG docker $USER
+```
+*Note: You may need to log out and log back in (or run `newgrp docker`) for the group changes to take effect.*
+
+4. **Verify installation:**
+```bash
+docker info
+docker-compose --version
+```

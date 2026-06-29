@@ -41,3 +41,10 @@
 
 # Thư mục chứa tài liệu tạm thời
 temp_docs/
+
+.config/cmus/cache
+.config/cmus/command-history
+.config/cmus/lib.pl
+.config/cmus/search-history
+.config/cmus/playlists
+.config/cmus/autosave

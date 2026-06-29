@@ -30,6 +30,7 @@ Hyprland rice on Arch Linux with **Catppuccin Mocha Blue** theming.
 | Input Method | [Fcitx5](https://fcitx-im.org/) + Bamboo (Vietnamese) |
 | Power Management | [TLP](https://linrunner.de/tlp/) |
 | Cloud Sync | [OneDrive client](https://github.com/abraunegg/onedrive) & [Rclone](https://rclone.org/) |
+| Containers | [Docker](https://www.docker.com/) |
 
 ## Structure
 

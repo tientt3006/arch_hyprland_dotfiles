@@ -1391,20 +1391,28 @@ pacman -Qdt              # Check for orphaned packages
 
 ### Periodic Maintenance Commands
 ```bash
-# ----- Cleanup -----
-du -sh /var/cache/pacman/pkg/       # View pacman cache size
-sudo paccache -rk1                  # Keep only 1 version of each cached package
-sudo pacman -Rns $(pacman -Qtdq)    # Remove orphan packages
+# ----- Cleanup & Optimization -----
+sudo du -sh /var/cache/pacman/pkg/       # View pacman cache size
+sudo paccache -rk2                  # Keep only 2 versions of each cached package
+yay -Yc                             # Remove unused dependencies (AUR & Official)
+sudo pacman -Rns $(pacman -Qtdq)    # Same as above
 rm -rf ~/.cache/*                   # Clear user application caches
-sudo journalctl --vacuum-size=50M   # 4. Clear old system logs (keep 50MB)
+journalctl --disk-usage             # Check how much space system logs are taking
+sudo journalctl --vacuum-size=50M   # Clear old system logs (keep 50MB)
+flatpak uninstall --unused          # Remove unused Flatpak runtimes (if any)
 
-# ----- System Health -----
+# ----- System Health & Info -----
 df -h                               # Check disk space
+yay -Ps                             # Print system stats (package count, sizes)
 systemd-analyze blame | head        # See what slows down boot
+systemd-analyze critical-chain      # Detailed tree of boot bottlenecks
 systemctl --failed                  # Check for crashed services
-systemctl list-timers               # View scheduled tasks (fstrim, etc.)
+systemctl list-timers               # View scheduled tasks (fstrim, paccache)
 journalctl -p err -b                # View error logs from current boot session
 ```
+
+Or turn on paccache remove timer (keep 2 or 3 nearest version for rollback): 
+`sudo systemctl enable --now paccache.timer`
 
 ### Restarting UI Components (Without Rebooting)
 ```bash

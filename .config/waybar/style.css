@@ -25,7 +25,7 @@
 
 /* --- Thanh Bar (toàn bộ) --- */
 window#waybar {
-    background-color: alpha(@background_solid, 0.90);
+    background-color: alpha(@background_solid, 0.8);
     border-radius: 10px;
     transition-property: background-color;
     transition-duration: 0.3s;

@@ -1,4 +1,4 @@
-backend = "kmeans"
+backend = "fastresize"
 color_space = "labmixed"
 palette = "dark16"
 

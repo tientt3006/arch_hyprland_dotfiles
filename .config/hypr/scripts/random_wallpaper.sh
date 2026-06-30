@@ -9,5 +9,5 @@ if [[ -n "$RANDOM_IMG" ]]; then
     wallust run -q "$RANDOM_IMG"
     killall -SIGUSR2 waybar
     swaync-client -rs
-    killall -SIGUSR1 kitty
+    # killall -SIGUSR1 kitty
 fi

@@ -3,4 +3,4 @@
 wallust theme Catppuccin-Mocha
 killall -SIGUSR2 waybar
 swaync-client -rs
-killall -SIGUSR1 kitty
+# killall -SIGUSR1 kitty

@@ -24,5 +24,5 @@ if [[ -n "$SELECTED" ]]; then
     wallust run -q "$IMG_PATH"
     killall -SIGUSR2 waybar
     swaync-client -rs
-    killall -SIGUSR1 kitty
+    # killall -SIGUSR1 kitty
 fi

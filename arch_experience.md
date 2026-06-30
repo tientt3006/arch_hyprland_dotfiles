@@ -780,6 +780,17 @@ The ultimate 2-way offline sync daemon for OneDrive on Linux.
    systemctl --user enable --now onedrive
    ```
 
+4. **How to Update Sync List Later:**
+   If you modify `~/.config/onedrive/sync_list` to add or remove folders, you MUST resync and restart the service:
+   ```bash
+   systemctl --user stop onedrive.service
+   onedrive --sync --resync
+   systemctl --user start onedrive.service
+   ```
+
+5. **Error check:**
+`journalctl --user -u onedrive.service -e -f`
+
 ### Google Drive (Rclone)
 Rclone is extremely powerful but requires manual setup. You can choose to either **Mount as a Network Drive** (saves space, requires internet) or use **2-Way Offline Sync** (acts like OneDrive).
 
@@ -849,43 +860,102 @@ Mounts Google Drive directly into your file manager without taking up local disk
    systemctl --user daemon-reload
    systemctl --user enable --now rclone-gdrive.service
    ```
+To stop and move to Option B:
+   ```bash
+   systemctl --user disable --now rclone-gdrive.service
+   ```
 
 #### Option B: Offline 2-Way Sync (Like OneDrive)
 Use `rclone bisync` coupled with a systemd timer. **Do not run this on a folder that is currently mounted!**
 1. **First Sync (Resync):**
+You need to create /GDrive_bisync folder
    ```bash
-   rclone bisync gdrive: ~/GDrive_Offline --drive-root-folder-id "YOUR_FOLDER_ID" --resync -v
+   mkdir -p ~/GDrive_bisync
+   rclone bisync gdrive: ~/GDrive_bisync --drive-root-folder-id "YOUR_FOLDER_ID" --exclude "/YOUR_EXCLUDE_FOLDER/**" --exclude "/YOUR_EXCLUDE_FOLDER/**" --resync -v --drive-acknowledge-abuse
    ```
 2. **Automate via Systemd Timer (Every 5 minutes):**
    Create `~/.config/systemd/user/rclone-bisync.service`:
-   ```ini
-   [Unit]
-   Description=Rclone 2-way Sync for Google Drive
-   [Service]
-   Type=oneshot
-   ExecStart=/usr/bin/rclone bisync gdrive: %h/GDrive_Offline --drive-root-folder-id "YOUR_FOLDER_ID" -q
+```ini
+[Unit]
+Description=Rclone 2-way Sync for Google Drive
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rclone bisync gdrive: %h/GDrive_bisync --drive-root-folder-id "YOUR_FOLDER_ID" --exclude "/YOUR_EXCLUDE_FOLDER/**" --exclude "/YOUR_EXCLUDE_FOLDER/**" -q --drive-acknowledge-abuse
+```
+Create `~/.config/systemd/user/rclone-bisync.timer`:
+```ini
+[Unit]
+Description=Run Rclone Bisync every 5 minutes
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+Unit=rclone-bisync.service
+[Install]
+WantedBy=timers.target
    ```
-   Create `~/.config/systemd/user/rclone-bisync.timer`:
-   ```ini
-   [Unit]
-   Description=Run Rclone Bisync every 5 minutes
-   [Timer]
-   OnBootSec=1min
-   OnUnitActiveSec=5min
-   Unit=rclone-bisync.service
-   [Install]
-   WantedBy=timers.target
-   ```
+To start it manually: `systemctl --user start rclone-bisync.service`
 3. Enable it:
    ```bash
    systemctl --user daemon-reload
    systemctl --user enable --now rclone-bisync.timer
    ```
+
+4. **How to Update Exclude Rules Later:**
+   If you want to add or remove `--exclude` rules, you CANNOT just edit the service file. Changing filters causes a database mismatch in Bisync. You MUST manually resync:
+   1. Stop the timer: `systemctl --user stop rclone-bisync.timer`
+   2. Edit your `~/.config/systemd/user/rclone-bisync.service` to update the `--exclude` flags.
+   3. Apply changes: `systemctl --user daemon-reload`
+   4. **CRITICAL:** Run the MANUAL terminal command (from Step 1) using your NEW `--exclude` flags and the `--resync` flag.
+   5. Once the manual resync finishes successfully, turn the timer back on: `systemctl --user start rclone-bisync.timer`
+
+5. **Error check:**
+`journalctl --user -u rclone-bisync.service -e -f`
+
 ## 5.12. Default app for picture, audio, video, pdf, text,..
 picture: imv
 video and audio: mpv
 pdf: browser
 text: nvim, sublimetext
+
+## 5.13. Install Obsidian and OBS Studio
+Both Obsidian and OBS Studio are available in the official Arch repositories and work great on Wayland natively.
+
+```bash
+sudo pacman -S obsidian obs-studio
+```
+
+*(Note: OBS Studio on Hyprland/Wayland uses `xdg-desktop-portal-hyprland` and `pipewire` for screen capturing. You also **MUST** install `hyprland-guiutils` (the UI dialog for selecting screens/windows): `sudo pacman -S hyprland-guiutils`. You can just open OBS, add a "Screen Capture (PipeWire)" source, and click "Open Selector" to pick a screen or a specific window!)*
+
+### Enable OBS Virtual Camera (for Zoom, Meet, etc.)
+To use OBS as a camera in Zoom or Google Meet, you need to install and load the `v4l2loopback` kernel module:
+1. Install packages: `sudo pacman -S v4l2loopback-dkms linux-headers`
+2. Auto-load the module on boot by creating these two files:
+   ```bash
+   echo "v4l2loopback" | sudo tee /etc/modules-load.d/v4l2loopback.conf
+   echo "options v4l2loopback devices=1 video_nr=10 card_label=\"OBS Virtual Camera\" exclusive_caps=1" | sudo tee /etc/modprobe.d/v4l2loopback.conf
+   ```
+3. Load it right now without rebooting:
+   ```bash
+   sudo modprobe v4l2loopback devices=1 video_nr=10 card_label="OBS Virtual Camera" exclusive_caps=1
+   ```
+Restart OBS, and the **"Start Virtual Camera"** button will appear!
+
+### Conflict between OBS Studio and RustDesk Unattended Access
+If you use RustDesk for remote access, you might have configured an auto-bypass script (`auto_share.sh`) in `~/.config/hypr/xdph.conf`.
+- **When the script is ENABLED:** RustDesk works perfectly without human interaction, but OBS Studio will **NOT** show the UI dialog (it auto-selects the main screen and hides the Window sharing feature).
+- **When the script is DISABLED:** OBS Studio works perfectly with the UI dialog, but RustDesk will require someone sitting at the computer to click "Share" when you connect remotely.
+
+To toggle between these two modes, edit `~/.config/hypr/xdph.conf` and comment/uncomment this line:
+```ini
+screencopy {
+    # Uncomment the line below for RustDesk unattended, comment it out for OBS UI picker
+    # custom_picker_binary = /home/neitnd/.config/hypr/scripts/auto_share.sh
+}
+```
+**CRITICAL:** Every time you modify `xdph.conf`, you MUST run the following command to apply the changes:
+```bash
+systemctl --user restart xdg-desktop-portal-hyprland
+```
 ---
 
 # Part 6: Theming (Catppuccin Mocha)

@@ -1,0 +1,8 @@
+* {
+    background: rgba({{background | rgb}}, 0.7);
+    background-alt: {{color0}};
+    foreground: {{foreground}};
+    selected: {{color4}};
+    active: {{color1}};
+    urgent: {{color3}};
+}

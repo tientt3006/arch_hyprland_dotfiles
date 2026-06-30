@@ -42,7 +42,7 @@
     ],
     // Separator module
     "custom/separator": {
-        "format": "|",
+        "format": "┃",
         "interval": "once",
         "tooltip": false
     },
@@ -86,7 +86,7 @@
     "custom/launcher": {
         // "format": "", // arch logo
         // "format": "󰀻", // app logo
-        "format": "󰍜", // menu logo
+        "format": "", // menu logo
         // "format": "󰄛", // cat face logo
         // "format": "", // cat logo
         "on-click": "uwsm app -- rofi -show drun -theme $HOME/.config/rofi/config.rasi",
@@ -201,8 +201,8 @@
     "idle_inhibitor": {
         "format": "{icon}",
         "format-icons": {
-            "activated": "󰈈", // Mắt mở
-            "deactivated": "󰈉" // Mắt nhắm
+            "activated": "", // Mắt mở
+            "deactivated": "" // Mắt nhắm
         },
         "tooltip": true,
         "tooltip-format-activated": "Keep Awake (Anti-sleep ON)",
@@ -224,7 +224,7 @@
         "format-vi": "VN"
     },
     "custom/powermenu": {
-        "format": "󰐥",
+        "format": "",
         "on-click": "$HOME/.config/rofi/powermenu/powermenu.sh",
         "tooltip": true,
         "tooltip-format": "Power Menu"

@@ -10,7 +10,7 @@ clear
 SELECTED=$(fd -t f -e jpg -e png -e jpeg -e gif . | fzf \
     --prompt="🖼️ Chon Hinh Nen: " \
     --preview="kitten icat --clear --transfer-mode=memory --stdin=no --place=\${FZF_PREVIEW_COLUMNS}x\${FZF_PREVIEW_LINES}@0x0 {}" \
-    --preview-window=right:70% \
+    --preview-window=right:50% \
     --border="rounded" \
     --margin=2%,2%)
 
@@ -21,4 +21,8 @@ if [[ -n "$SELECTED" ]]; then
     IMG_PATH="$WALLPAPER_DIR/$SELECTED"
     # Thay đổi hình nền, hiệu ứng phóng to từ giữa màn hình
     uwsm app -- awww img "$IMG_PATH" --transition-type random --transition-step 90 --transition-fps 60
+    wallust run -q "$IMG_PATH"
+    killall -SIGUSR2 waybar
+    swaync-client -rs
+    killall -SIGUSR1 kitty
 fi

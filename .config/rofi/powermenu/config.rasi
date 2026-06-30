@@ -5,7 +5,7 @@ configuration {
 }
 
 /*****----- Global Properties -----*****/
-@import "color.rasi"
+@import "../wallust-colors.rasi"
 
 /*****----- Main Window -----*****/
 window {
@@ -20,9 +20,9 @@ window {
     enabled:            true;
     margin:             0px;
     padding:            0px;
-    border:             1px solid;
+    border: 0px;
     border-radius:      16px;
-    border-color:       rgba(137,180,250,0.25);
+    border-color: transparent;
     cursor:             "default";
     background-color:   @background;
 }
@@ -56,8 +56,8 @@ textbox-prompt-colon {
     str:                "󰐥";
     padding:            10px 14px;
     border-radius:      10px;
-    background-color:   rgba(243,139,168,0.15);
-    text-color:         #f38ba8;
+    background-color:   @urgent;
+    text-color:         @background;
     font:               "JetBrainsMono Nerd Font 16";
 }
 
@@ -65,8 +65,8 @@ prompt {
     enabled:            true;
     padding:            10px 16px;
     border-radius:      10px;
-    background-color:   rgba(137,180,250,0.1);
-    text-color:         #89b4fa;
+    background-color:   @selected;
+    text-color:         @background;
 }
 
 /*****----- Message (Uptime) -----*****/
@@ -74,10 +74,10 @@ message {
     enabled:            true;
     margin:             0px 0px 14px 0px;
     padding:            10px 14px;
-    border:             1px solid;
+    border: 0px;
     border-radius:      10px;
-    border-color:       rgba(255,255,255,0.07);
-    background-color:   rgba(49,50,68,0.5);
+    border-color: transparent;
+    background-color:   @background-alt;
     text-color:         @foreground;
 }
 textbox {
@@ -116,11 +116,11 @@ element {
     spacing:            0px;
     margin:             0px;
     padding:            10px 14px;
-    border:             1px solid;
+    border: 0px;
     border-radius:      12px;
-    border-color:       rgba(255,255,255,0.07);
-    background-color:   rgba(49,50,68,0.5);
-    text-color:         #a6adc8;
+    border-color: transparent;
+    background-color:   @background-alt;
+    text-color:         @foreground;
     cursor:             pointer;
 }
 
@@ -135,20 +135,20 @@ element-text {
 
 element normal.normal,
 element alternate.normal {
-    background-color:   rgba(49,50,68,0.5);
-    text-color:         #a6adc8;
+    background-color:   @background-alt;
+    text-color:         @foreground;
 }
 
 element selected.normal {
-    background-color:   rgba(137,180,250,0.18);
-    border-color:       rgba(137,180,250,0.6);
-    text-color:         #cdd6f4;
+    background-color:   @selected;
+    border-color: transparent;
+    text-color:         @background;
 }
 
 element normal.urgent,
 element alternate.urgent,
 element selected.urgent {
-    background-color:   rgba(243,139,168,0.15);
-    border-color:       rgba(243,139,168,0.5);
-    text-color:         #f38ba8;
+    background-color:   @urgent;
+    border-color: transparent;
+    text-color:         @background;
 }

@@ -13,7 +13,7 @@ configuration {
 }
 
 /*****----- Global Properties -----*****/
-@import                          "color.rasi"
+@import                          "wallust-colors.rasi"
 
 * {
     border-colour:               var(selected);

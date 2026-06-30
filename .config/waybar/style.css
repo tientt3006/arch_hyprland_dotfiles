@@ -1,14 +1,16 @@
+@import "wallust-colors.css";
+
 /* ============================================================
    Waybar - Catppuccin Mocha Blue Dark
    Palette: https://catppuccin.com/palette (Mocha)
    ============================================================ */
 
 /* --- Catppuccin Mocha Color Tokens ---
-   Base:    #1e1e2e    Surface0: #313244    Surface1: #45475a
-   Text:    #cdd6f4    Subtext1: #bac2de    Overlay2: #9399b2
-   Blue:    #89b4fa    Sapphire: #74c7ec    Lavender: #b4befe
-   Green:   #a6e3a1    Yellow:   #f9e2af    Red:      #f38ba8
-   Mauve:   #cba6f7    Peach:    #fab387
+   Base:    @background    Surface0: @background    Surface1: @color8
+   Text:    @foreground    Subtext1: @foreground    Overlay2: @color8
+   Blue:    @color4    Sapphire: @color6    Lavender: @color5
+   Green:   @color2    Yellow:   @color3    Red:      @color1
+   Mauve:   @color13    Peach:    @color9
    ============================================================ */
 
 * {
@@ -16,20 +18,19 @@
     border-radius: 0;
     /* Đổi font Cozette (pixelated/monospace) thành Nerd Font hiện đại */
     font-family: "JetBrainsMono Nerd Font", "FiraCode Nerd Font", "Symbols Nerd Font", sans-serif;
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 700;
     min-height: 0;
 }
 
 /* --- Thanh Bar (toàn bộ) --- */
 window#waybar {
-    /* Nền Catppuccin Base bán trong suốt */
-    background-color: rgba(30, 30, 46, 0.82);
-    color: #cdd6f4;
+    background-color: alpha(@background_solid, 0.90);
     border-radius: 10px;
     transition-property: background-color;
     transition-duration: 0.3s;
 }
+
 
 /* Khi Hyprland ẩn thanh bar (ví dụ ở chế độ toàn màn hình) */
 window#waybar.hidden {
@@ -40,26 +41,29 @@ window#waybar.hidden {
 #workspaces button {
     padding: 0 8px;
     background-color: transparent;
-    color: #6c7086; /* overlay0 - màu xám nhạt cho ws không active */
+    color: @foreground;
+    /* overlay0 - màu xám nhạt cho ws không active */
     border-radius: 6px;
     margin: 4px 2px;
     transition: all 0.2s ease;
 }
 
 #workspaces button:hover {
-    background-color: rgba(137, 180, 250, 0.15); /* blue tinted hover */
-    color: #89b4fa;
+    background-color: alpha(@color4, 0.15);
+    /* blue tinted hover */
+    color: @foreground;
 }
 
 #workspaces button.active {
-    background-color: rgba(137, 180, 250, 0.20);
-    color: #89b4fa; /* blue */
-    font-weight: bold;
+    background-color: alpha(@color4, 0.20);
+    color: @foreground;
+    /* blue */
 }
 
 #workspaces button.urgent {
-    background-color: rgba(243, 139, 168, 0.20);
-    color: #f38ba8; /* red */
+    background-color: alpha(@color1, 0.20);
+    color: @foreground;
+    /* red */
 }
 
 /* --- Taskbar (Các ứng dụng đang mở) --- */
@@ -72,12 +76,12 @@ window#waybar.hidden {
 }
 
 #taskbar button:hover {
-    background-color: rgba(137, 180, 250, 0.15);
+    background-color: alpha(@color4, 0.15);
 }
 
 #taskbar button.active {
-    background-color: rgba(137, 180, 250, 0.25);
-    border-bottom: 2px solid #89b4fa;
+    background-color: alpha(@color4, 0.25);
+    border-bottom: 2px solid @color4;
     border-radius: 6px 6px 0 0;
 }
 
@@ -92,77 +96,115 @@ window#waybar.hidden {
 #cpu,
 #memory,
 #disk,
-#tray,
 #idle_inhibitor,
 #language,
 #custom-launcher,
 #custom-powermenu,
-#custom-notification,
+#custom-notification {
+    padding: 0 10px;
+    color: @foreground;
+    border-radius: 6px;
+    margin: 4px 0;
+    transition: all 0.25s ease-in-out;
+}
+
+#clock:hover,
+#battery:hover,
+#backlight:hover,
+#network:hover,
+#pulseaudio:hover,
+#bluetooth:hover,
+#temperature:hover,
+#cpu:hover,
+#memory:hover,
+#disk:hover,
+#idle_inhibitor:hover,
+#language:hover,
+#custom-launcher:hover,
+#custom-powermenu:hover,
+#custom-notification:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#tray,
 #custom-separator,
 #window {
     padding: 0 10px;
-    color: #cdd6f4;
+    color: @foreground;
     border-radius: 6px;
     margin: 4px 0;
 }
 
 /* --- Tiêu đề cửa sổ ở giữa --- */
 #window {
-    font-weight: 600;
-    color: #bac2de; /* subtext1 - trắng nhạt hơn */
+    color: @foreground;
+    /* subtext1 - trắng nhạt hơn */
     font-style: italic;
+}
+
+#window.empty {
+    background-color: transparent;
 }
 
 /* --- Separator --- */
 #custom-separator {
-    color: #45475a; /* surface1 - gần như ẩn, đủ thấy vạch ngăn */
+    color: @foreground;
+    /* surface1 - gần như ẩn, đủ thấy vạch ngăn */
     padding: 0 4px;
-    font-size: 11px;
+    font-size: 12px;
+    margin-top: 6px;
+    margin-bottom: 6px;
 }
 
 /* --- Nút Launcher (trái cùng) --- */
 #custom-launcher {
-    color: #89b4fa;  /* blue */
-    font-size: 17px;
+    color: @foreground;
+    /* blue */
     padding-left: 14px;
     padding-right: 12px;
     border-radius: 10px 0 0 10px;
 }
 
 #custom-launcher:hover {
-    color: #b4befe; /* lavender */
+    color: @foreground;
+    /* lavender */
 }
 
 /* --- Nút Power Menu (phải cùng) --- */
 #custom-powermenu {
-    color: #f38ba8; /* red */
-    font-size: 15px;
+    color: @foreground;
+    /* red */
     padding-left: 10px;
     padding-right: 14px;
     border-radius: 0 10px 10px 0;
 }
 
 #custom-powermenu:hover {
-    color: #fab387; /* peach */
+    color: @foreground;
+    /* peach */
 }
 
 /* --- Đồng hồ --- */
 #clock {
-    color: #b4befe; /* lavender */
-    font-weight: 600;
+    color: @foreground;
+    /* lavender */
 }
 
 /* --- Pin --- */
 #battery {
-    color: #a6e3a1; /* green */
+    color: @foreground;
+    /* green */
 }
 
 #battery.warning {
-    color: #f9e2af; /* yellow */
+    color: @foreground;
+    /* yellow */
 }
 
 #battery.critical {
-    color: #f38ba8; /* red */
+    color: @foreground;
+    /* red */
 }
 
 #battery.critical:not(.charging) {
@@ -175,59 +217,74 @@ window#waybar.hidden {
 
 #battery.charging,
 #battery.plugged {
-    color: #a6e3a1; /* green khi đang sạc */
+    color: @foreground;
+    /* green khi đang sạc */
 }
 
 @keyframes blink {
-    from { color: #f38ba8; }
-    to   { color: #fab387; }
+    from {
+        color: @foreground;
+    }
+
+    to {
+        color: @foreground;
+    }
 }
 
 /* --- Độ sáng --- */
 #backlight {
-    color: #f9e2af; /* yellow */
+    color: @foreground;
+    /* yellow */
 }
 
 /* --- Mạng --- */
 #network {
-    color: #89b4fa; /* blue */
+    color: @foreground;
+    /* blue */
 }
 
 #network.disconnected {
-    color: #f38ba8; /* red */
+    color: @foreground;
+    /* red */
 }
 
 /* --- Âm lượng --- */
 #pulseaudio {
-    color: #cba6f7; /* mauve */
+    color: @foreground;
+    /* mauve */
 }
 
 #pulseaudio.muted {
-    color: #6c7086; /* overlay0 - xám khi tắt tiếng */
+    color: @foreground;
+    /* overlay0 - xám khi tắt tiếng */
 }
 
 /* --- Bluetooth --- */
 #bluetooth {
-    color: #74c7ec; /* sapphire */
+    color: @foreground;
+    /* sapphire */
 }
 
 #bluetooth.off,
 #bluetooth.disabled {
-    color: #6c7086;
+    color: @foreground;
 }
 
 /* --- Ngôn ngữ bàn phím --- */
 #language {
-    color: #a6e3a1; /* green */
+    color: @foreground;
+    /* green */
 }
 
 /* --- Nhiệt độ --- */
 #temperature {
-    color: #fab387; /* peach */
+    color: @foreground;
+    /* peach */
 }
 
 #temperature.critical {
-    color: #f38ba8; /* red */
+    color: @foreground;
+    /* red */
     animation-name: blink;
     animation-duration: 0.5s;
     animation-iteration-count: infinite;
@@ -236,17 +293,17 @@ window#waybar.hidden {
 
 /* --- CPU --- */
 #cpu {
-    color: #89b4fa;
+    color: @foreground;
 }
 
 /* --- RAM --- */
 #memory {
-    color: #cba6f7;
+    color: @foreground;
 }
 
 /* --- Ổ đĩa --- */
 #disk {
-    color: #74c7ec;
+    color: @foreground;
 }
 
 /* --- Cái khay hệ thống (Tray) --- */
@@ -254,27 +311,29 @@ window#waybar.hidden {
     background-color: transparent;
 }
 
-#tray > .passive {
+#tray>.passive {
     -gtk-icon-effect: dim;
 }
 
-#tray > .needs-attention {
+#tray>.needs-attention {
     -gtk-icon-effect: highlight;
-    background-color: rgba(243, 139, 168, 0.3);
+    background-color: alpha(@color1, 0.3);
     border-radius: 4px;
 }
 
 /* --- Chuông thông báo --- */
 #custom-notification {
-    color: #f9e2af; /* yellow */
-    font-size: 15px;
+    color: @foreground;
+    /* yellow */
 }
 
 /* --- Cấm ngủ --- */
 #idle_inhibitor {
-    color: #6c7086; /* xám khi OFF */
+    color: @foreground;
+    /* xám khi OFF */
 }
 
 #idle_inhibitor.activated {
-    color: #a6e3a1; /* xanh lá khi ON */
+    color: @foreground;
+    /* xanh lá khi ON */
 }

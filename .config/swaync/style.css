@@ -1,3 +1,5 @@
+@import "wallust-colors.css";
+
 /* =====================================================
    SwayNC Style — Catppuccin Mocha Blue
    ===================================================== */
@@ -34,9 +36,9 @@
 
 /* Card thông báo */
 .notification {
-    background: rgba(24, 24, 37, 0.93);
+    background: alpha(@background_solid, 0.93);
     border-radius: 14px;
-    border: 1px solid rgba(137, 180, 250, 0.25);
+    border: 1px solid alpha(@color4, 0.25);
     margin: 5px 10px;
     padding: 0;
     box-shadow:
@@ -45,8 +47,8 @@
 }
 
 .notification:hover {
-    background: rgba(30, 30, 46, 0.97);
-    border-color: rgba(137, 180, 250, 0.5);
+    background: alpha(@background_solid, 0.97);
+    border-color: alpha(@color4, 0.5);
     box-shadow:
         0 6px 28px rgba(0, 0, 0, 0.55),
         inset 0 1px 0 rgba(255, 255, 255, 0.07);
@@ -57,7 +59,7 @@
     background: transparent;
     padding: 12px 14px;
     border-radius: 14px;
-    color: #cdd6f4;
+    color: @foreground;
 }
 
 /* Icon của App gửi thông báo */
@@ -71,7 +73,7 @@
 }
 
 .notification-default-action:hover {
-    background: rgba(137, 180, 250, 0.06);
+    background: alpha(@color4, 0.06);
     border-radius: 14px;
 }
 
@@ -79,13 +81,13 @@
 .summary {
     font-weight: 700;
     font-size: 13px;
-    color: #cdd6f4;
+    color: @foreground;
     text-shadow: none;
 }
 
 /* Nội dung thông báo */
 .body {
-    color: #a6adc8;
+    color: @foreground;
     font-size: 12px;
     margin-top: 3px;
     line-height: 1.4;
@@ -94,25 +96,25 @@
 /* Tên ứng dụng gửi thông báo */
 .app-name {
     font-size: 11px;
-    color: #6c7086;
+    color: @color8;
     font-weight: 500;
 }
 
 /* Thời gian thông báo */
 .time {
     font-size: 11px;
-    color: #585b70;
+    color: @color8;
 }
 
 /* Nút đóng (×) */
 .close-button {
-    background: rgba(243, 139, 168, 0.1);
-    color: #f38ba8;
+    background: alpha(@color1, 0.1);
+    color: @color1;
     text-shadow: none;
     padding: 2px 4px;
     border-radius: 8px;
     box-shadow: none;
-    border: 1px solid rgba(243, 139, 168, 0.2);
+    border: 1px solid alpha(@color1, 0.2);
     min-width: 20px;
     min-height: 20px;
     margin: 8px 8px 8px 4px;
@@ -120,9 +122,9 @@
 }
 
 .close-button:hover {
-    background: #f38ba8;
-    color: #1e1e2e;
-    border-color: #f38ba8;
+    background: @color1;
+    color: @background;
+    border-color: @color1;
 }
 
 /* Các nút hành động (action buttons) */
@@ -130,27 +132,27 @@
     padding: 5px 12px;
     margin: 4px 4px 8px 4px;
     box-shadow: none;
-    background: rgba(49, 50, 68, 0.6);
-    border: 1px solid rgba(137, 180, 250, 0.2);
+    background: alpha(@color8, 0.6);
+    border: 1px solid alpha(@color4, 0.2);
     border-radius: 8px;
-    color: #89b4fa;
+    color: @color4;
     font-size: 11px;
     font-weight: 500;
 }
 
 .notification-action:hover {
-    background: rgba(137, 180, 250, 0.18);
-    border-color: rgba(137, 180, 250, 0.5);
-    color: #cdd6f4;
+    background: alpha(@color4, 0.18);
+    border-color: alpha(@color4, 0.5);
+    color: @foreground;
 }
 
 /* Màu sắc theo mức độ ưu tiên */
-.low    { border-color: rgba(137, 180, 250, 0.18); }
-.normal { border-color: rgba(137, 180, 250, 0.25); }
+.low    { border-color: alpha(@color4, 0.18); }
+.normal { border-color: alpha(@color4, 0.25); }
 .critical {
-    border-color: rgba(243, 139, 168, 0.65);
-    background: rgba(243, 139, 168, 0.07);
-    box-shadow: 0 0 14px rgba(243, 139, 168, 0.18);
+    border-color: alpha(@color1, 0.65);
+    background: alpha(@color1, 0.07);
+    box-shadow: 0 0 14px alpha(@color1, 0.18);
 }
 
 /* =====================================================
@@ -158,8 +160,8 @@
    ===================================================== */
 
 .control-center {
-    background: rgba(17, 17, 27, 0.96);
-    border: 1px solid rgba(137, 180, 250, 0.18);
+    background: alpha(@background_solid, 0.96);
+    border: 1px solid alpha(@color4, 0.18);
     border-radius: 18px;
     padding: 6px;
     box-shadow:
@@ -173,7 +175,7 @@
 
 .control-center-list-placeholder {
     opacity: 0.4;
-    color: #6c7086;
+    color: @color8;
     font-size: 13px;
 }
 
@@ -182,7 +184,7 @@
    ===================================================== */
 
 .widget-title {
-    color: #89b4fa;
+    color: @color4;
     background: transparent;
     padding: 12px 16px 8px 16px;
     font-size: 14px;
@@ -194,9 +196,9 @@
 .widget-title > button {
     font-size: 11px;
     font-weight: 600;
-    color: #1e1e2e;
+    color: @background;
     text-shadow: none;
-    background: rgba(137, 180, 250, 0.8);
+    background: alpha(@color4, 0.8);
     border: none;
     box-shadow: none;
     border-radius: 8px;
@@ -204,8 +206,8 @@
 }
 
 .widget-title > button:hover {
-    background: #89b4fa;
-    color: #1e1e2e;
+    background: @color4;
+    color: @background;
 }
 
 /* =====================================================
@@ -213,28 +215,28 @@
    ===================================================== */
 
 .widget-dnd {
-    background: rgba(30, 30, 46, 0.5);
+    background: alpha(@background_solid, 0.5);
     padding: 8px 16px;
     margin: 2px 6px 6px 6px;
     border-radius: 12px;
     font-size: 13px;
-    color: #a6adc8;
+    color: @foreground;
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .widget-dnd > switch {
     border-radius: 14px;
-    background: #313244;
-    border: 1px solid #45475a;
+    background: @background;
+    border: 1px solid @color8;
 }
 
 .widget-dnd > switch:checked {
-    background: #89b4fa;
-    border-color: #89b4fa;
+    background: @color4;
+    border-color: @color4;
 }
 
 .widget-dnd > switch slider {
-    background: #cdd6f4;
+    background: @foreground;
     border-radius: 12px;
     min-height: 14px;
     min-width: 14px;

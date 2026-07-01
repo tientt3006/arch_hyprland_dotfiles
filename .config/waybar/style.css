@@ -26,22 +26,11 @@
 /* --- Thanh Bar (toàn bộ) --- */
 window#waybar {
     /* Đưa nền trong suốt cho window gốc để nhường màu nền cho khung (box) bên trong */
-    background-color: transparent;
-}
-
-/* Thẻ box to nhất chứa toàn bộ nội dung của Waybar */
-window#waybar > box {
-    background-color: alpha(@background_solid, 0.6);
+    background-color: alpha(@background_solid, 0.8);
     border-radius: 10px;
     transition-property: background-color;
     transition-duration: 0.3s;
 }
-
-/* Hiệu ứng khi di chuột vào bất kỳ phần tử nào trên thanh Waybar */
-window#waybar > box:hover {
-    background-color: alpha(@background_solid, 1.0);
-}
-
 
 /* Khi Hyprland ẩn thanh bar (ví dụ ở chế độ toàn màn hình) */
 window#waybar.hidden {
@@ -67,7 +56,7 @@ window#waybar.hidden {
 
 #workspaces button.active {
     background-color: alpha(@color4, 0.25);
-    border-bottom: 2px solid @color5;
+    border-bottom: 2px solid @color4;
     border-radius: 4px 4px 0 0;
     color: @foreground;
     /* blue */

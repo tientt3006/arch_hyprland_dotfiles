@@ -1,4 +1,7 @@
 #!/bin/bash
+# Tự resize cửa sổ về 90%
+sleep 0.15 && hyprctl dispatch resizeactive exact 90% 80% &> /dev/null &
+
 WALLPAPER_DIR="$HOME/GDrive_bisync/picture/Saved pics/arch_wallpapers"
 
 cd "$WALLPAPER_DIR" || exit 1

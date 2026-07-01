@@ -15,11 +15,13 @@
         "wlr/taskbar"
         // "hyprland/window"
     ],
-    "modules-center": [
-        // "custom/launcher"
-        // "network"
-        "hyprland/window"
-    ],
+    // "modules-center": [
+    //     // "custom/launcher"
+    //     "network",
+    //     "user",
+    //     "privacy"
+    //     //"hyprland/window"
+    // ],
     "modules-right": [
         // "temperature",
         // "cpu",

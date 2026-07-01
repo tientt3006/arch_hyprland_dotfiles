@@ -13,7 +13,7 @@ if ! command -v fzf &> /dev/null || ! command -v fd &> /dev/null; then
 fi
 
 # Tự resize cửa sổ về 90% để hiện ở giữa màn hình
-sleep 0.15 && hyprctl dispatch resizeactive exact 90% 90% &> /dev/null &
+sleep 0.15 && hyprctl dispatch resizeactive exact 90% 80% &> /dev/null &
 
 # Giao diện Catppuccin Mocha cho FZF
 export FZF_DEFAULT_OPTS="--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \

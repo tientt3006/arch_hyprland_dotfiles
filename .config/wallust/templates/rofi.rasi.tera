@@ -3,6 +3,6 @@
     background-alt: {{color0}};
     foreground: {{foreground}};
     selected: {{color4}};
-    active: {{color1}};
-    urgent: {{color3}};
+    active: {{color5}};
+    urgent: {{color1}};
 }

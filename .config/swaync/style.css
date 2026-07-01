@@ -42,16 +42,16 @@
     margin: 5px 10px;
     padding: 0;
     box-shadow:
-        0 4px 24px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    0 4px 22px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 alpha(@color5, 0.06);
 }
 
 .notification:hover {
     background: alpha(@background_solid, 0.97);
     border-color: alpha(@color4, 0.5);
     box-shadow:
-        0 6px 28px rgba(0, 0, 0, 0.55),
-        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    0 6px 26px rgba(0, 0, 0, 0.48),
+    inset 0 1px 0 alpha(@color5, 0.08);
 }
 
 /* Nội dung bên trong card */
@@ -73,7 +73,7 @@
 }
 
 .notification-default-action:hover {
-    background: alpha(@color4, 0.06);
+    background: alpha(@color5, 0.08);
     border-radius: 14px;
 }
 
@@ -132,17 +132,17 @@
     padding: 5px 12px;
     margin: 4px 4px 8px 4px;
     box-shadow: none;
-    background: alpha(@color8, 0.6);
-    border: 1px solid alpha(@color4, 0.2);
+    background: alpha(@color5, 0.18);
+    border: 1px solid alpha(@color5, 0.34);
     border-radius: 8px;
-    color: @color4;
+    color: @color5;
     font-size: 11px;
     font-weight: 500;
 }
 
 .notification-action:hover {
-    background: alpha(@color4, 0.18);
-    border-color: alpha(@color4, 0.5);
+    background: alpha(@color5, 0.28);
+    border-color: alpha(@color5, 0.56);
     color: @foreground;
 }
 
@@ -165,8 +165,8 @@
     border-radius: 18px;
     padding: 6px;
     box-shadow:
-        0 8px 40px rgba(0, 0, 0, 0.6),
-        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    0 8px 36px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 alpha(@color5, 0.05);
 }
 
 .control-center-list {
@@ -198,7 +198,7 @@
     font-weight: 600;
     color: @background;
     text-shadow: none;
-    background: alpha(@color4, 0.8);
+    background: alpha(@color5, 0.82);
     border: none;
     box-shadow: none;
     border-radius: 8px;
@@ -206,7 +206,7 @@
 }
 
 .widget-title > button:hover {
-    background: @color4;
+    background: @color5;
     color: @background;
 }
 
@@ -221,7 +221,7 @@
     border-radius: 12px;
     font-size: 13px;
     color: @foreground;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid alpha(@color5, 0.08);
 }
 
 .widget-dnd > switch {

@@ -19,16 +19,27 @@
     /* Đổi font Cozette (pixelated/monospace) thành Nerd Font hiện đại */
     font-family: "JetBrainsMono Nerd Font", "FiraCode Nerd Font", "Symbols Nerd Font", sans-serif;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 600;
     min-height: 0;
 }
 
 /* --- Thanh Bar (toàn bộ) --- */
 window#waybar {
-    background-color: alpha(@background_solid, 0.8);
+    /* Đưa nền trong suốt cho window gốc để nhường màu nền cho khung (box) bên trong */
+    background-color: transparent;
+}
+
+/* Thẻ box to nhất chứa toàn bộ nội dung của Waybar */
+window#waybar > box {
+    background-color: alpha(@background_solid, 0.6);
     border-radius: 10px;
     transition-property: background-color;
     transition-duration: 0.3s;
+}
+
+/* Hiệu ứng khi di chuột vào bất kỳ phần tử nào trên thanh Waybar */
+window#waybar > box:hover {
+    background-color: alpha(@background_solid, 1.0);
 }
 
 
@@ -49,13 +60,15 @@ window#waybar.hidden {
 }
 
 #workspaces button:hover {
-    background-color: alpha(@color4, 0.15);
-    /* blue tinted hover */
+    background-color: alpha(@color5, 0.16);
+    /* soft accent hover */
     color: @foreground;
 }
 
 #workspaces button.active {
-    background-color: alpha(@color4, 0.20);
+    background-color: alpha(@color4, 0.25);
+    border-bottom: 2px solid @color5;
+    border-radius: 4px 4px 0 0;
     color: @foreground;
     /* blue */
 }
@@ -76,13 +89,13 @@ window#waybar.hidden {
 }
 
 #taskbar button:hover {
-    background-color: alpha(@color4, 0.15);
+    background-color: alpha(@color5, 0.16);
 }
 
 #taskbar button.active {
     background-color: alpha(@color4, 0.25);
     border-bottom: 2px solid @color4;
-    border-radius: 6px 6px 0 0;
+    border-radius: 4px 4px 0 0;
 }
 
 /* --- Tất cả module chung --- */
@@ -123,8 +136,8 @@ window#waybar.hidden {
 #custom-launcher:hover,
 #custom-powermenu:hover,
 #custom-notification:hover {
-    background-color: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    background-color: alpha(@color5, 0.14);
+    box-shadow: 0 2px 4px alpha(@color5, 0.12);
 }
 
 #tray,

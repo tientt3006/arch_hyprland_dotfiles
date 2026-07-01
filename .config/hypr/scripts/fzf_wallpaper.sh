@@ -22,6 +22,7 @@ if [[ -n "$SELECTED" ]]; then
     # Thay đổi hình nền, hiệu ứng phóng to từ giữa màn hình
     uwsm app -- awww img "$IMG_PATH" --transition-type random --transition-step 90 --transition-fps 60
     wallust run -q "$IMG_PATH"
+    # hyprctl reload
     killall -SIGUSR2 waybar
     swaync-client -rs
     # killall -SIGUSR1 kitty

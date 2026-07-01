@@ -7,6 +7,7 @@ if [[ -n "$RANDOM_IMG" ]]; then
     # Thay đổi hình nền với hiệu ứng chuyển cảnh ngẫu nhiên
     uwsm app -- awww img "$RANDOM_IMG" --transition-type random --transition-step 90 --transition-fps 60
     wallust run -q "$RANDOM_IMG"
+    # hyprctl reload
     killall -SIGUSR2 waybar
     swaync-client -rs
     # killall -SIGUSR1 kitty

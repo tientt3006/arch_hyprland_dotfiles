@@ -934,6 +934,8 @@ To use OBS as a camera in Zoom or Google Meet, you need to install and load the 
    echo "v4l2loopback" | sudo tee /etc/modules-load.d/v4l2loopback.conf
    echo "options v4l2loopback devices=1 video_nr=10 card_label=\"OBS Virtual Camera\" exclusive_caps=1" | sudo tee /etc/modprobe.d/v4l2loopback.conf
    ```
+   or remove it:
+   `sudo rm -f /etc/modules-load.d/v4l2loopback.conf`
 3. Load it right now without rebooting:
    ```bash
    sudo modprobe v4l2loopback devices=1 video_nr=10 card_label="OBS Virtual Camera" exclusive_caps=1
@@ -1256,7 +1258,7 @@ layerrule {
 
 ## 8.5. Understanding Power Consumption on a Hybrid Laptop
 
-A common misconception: "The system reports 20W idle, minus 6W for NVIDIA, so the CPU must be consuming 14W!" This is wrong. The 20W idle total is distributed across many components:
+A common misconception: "The system reports 20W idle. The 20W idle total is distributed across many components:
 
 | Component | Typical Idle Draw |
 |---|---|
@@ -1264,14 +1266,105 @@ A common misconception: "The system reports 20W idle, minus 6W for NVIDIA, so th
 | NVMe SSD (Gen 4) | ~1.5–2W |
 | RAM & Wi-Fi radio | ~2W |
 | NVIDIA dGPU (if awake) | ~5–6W |
-| **Intel CPU (H-Series, 12th Gen)** | **~4–6W** (excellent for a high-performance chip) |
+| **Intel CPU (H-Series, 12th Gen)** | 10w average|
 
 ### How to Verify Your Optimization
 1. Unplug the charger.
 2. Disable "Hardware Acceleration" in Chrome Settings to prevent it from waking NVIDIA.
 3. Leave the system idle for 1 minute.
 4. Run `sudo powertop` and read the top line: `The battery reports a discharge rate of...`
-5. **Target:** 10–13W = fully optimized Arch Linux, comparable to Windows.
+5. **Target:** 10–13W = fully optimized Arch Linux, comparable to Windows. But mine still say ~20w :((
+
+## 8.6. **NOT SURE IT WORK** PRIME Offloading (Running Specific Apps on NVIDIA) **NOT SURE IT WORK**
+
+Since our global environment variables force the system to use the Intel iGPU to save battery, you must explicitly tell heavy graphical apps (Games, Blender, OBS Studio) to wake up and use the NVIDIA card.
+
+### 1. Install the offload utility
+```bash
+sudo pacman -S nvidia-prime
+```
+
+### 2. How to use (Terminal)
+Prefix any command with `prime-run`:
+```bash
+prime-run blender
+prime-run obs
+```
+
+### 3. How to use (GUI/Launcher — Permanent setup)
+To make an app always launch with the NVIDIA GPU when you click its icon in the app launcher (Rofi):
+1. Copy its `.desktop` shortcut to your local applications folder (so updates don't overwrite your changes):
+   ```bash
+   cp /usr/share/applications/obs.desktop ~/.local/share/applications/
+   ```
+2. Edit the copied file:
+   ```bash
+   nano ~/.local/share/applications/obs.desktop
+   ```
+3. Find the `Exec=` line and add `prime-run` right after it:
+   - **Before:** `Exec=obs`
+   - **After:** `Exec=prime-run obs`
+4. Save and close. Rofi will automatically apply `uwsm app -- prime-run obs`, seamlessly putting the app inside the systemd scope while offloading graphics to NVIDIA!
+
+### 4. Steam Games
+Right-click the game in Steam → **Properties** → **General** → **Launch Options**, and paste:
+```text
+prime-run %command%
+```
+
+*(Note: AI/Data Science libraries like PyTorch/TensorFlow use CUDA and automatically wake up the GPU. You do **not** need `prime-run` for them.)*
+
+## 8.7. **NOT SURE IT WORK** Enable NVIDIA Deep Sleep (RTD3)
+Even if no apps are running on the NVIDIA GPU, the driver might keep it in an "Idle" state (P8) drawing ~5-6W continuously. To allow Turing/Ampere GPUs (like RTX 3050) to completely power off (0W / D3cold state) when not in use:
+
+1. Create a modprobe configuration file to pass the dynamic power management parameter to the kernel:
+   ```bash
+   echo "options nvidia NVreg_DynamicPowerManagement=0x02" | sudo tee /etc/modprobe.d/nvidia-pm.conf
+   ```
+   --sudo systemctl enable --now nvidia-persistenced.service--
+2. Because NVIDIA modules are loaded early in the boot process (configured in `mkinitcpio.conf`), you MUST rebuild the initramfs for this change to take effect:
+   ```bash
+   sudo mkinitcpio -P
+   ```
+3. Create a `udev` rule to allow the OS to auto-suspend the NVIDIA VGA and Audio controllers:
+   ```bash
+   sudo bash -c 'cat << EOF > /etc/udev/rules.d/80-nvidia-pm.rules
+   # Bật tính năng auto-suspend cho NVIDIA VGA và Audio controller
+   ACTION=="add|bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="auto"
+   ACTION=="add|bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200", TEST=="power/control", ATTR{power/control}="auto"
+   ACTION=="add|bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", TEST=="power/control", ATTR{power/control}="auto"
+   EOF'
+   ```
+4. **Crucial for Wayland/Hyprland:** You must explicitly tell Aquamarine (Hyprland's backend) to use the Intel iGPU as the primary rendering card, while keeping the NVIDIA card as a secondary display-only output. This allows the NVIDIA card to sleep but still wake up automatically when an HDMI monitor is plugged in!
+   Edit your UWSM environment file `~/.config/uwsm/env` and add:
+   ```bash
+   AQ_DRM_DEVICES=/dev/dri/by-path/pci-0000:00:02.0-card:/dev/dri/by-path/pci-0000:01:00.0-card
+   ```
+   *(Note: The first card `00:02.0` is Intel, the second `01:00.0` is NVIDIA. Order is crucial!)
+   , to view its name: `lspci | grep -i nvidia` and `ls -la /dev/dri/by-path/ | grep -i card`*
+
+5. Reboot. Now, when `nvidia-smi` shows no processes, the GPU will enter deep sleep (0W).
+Verify with `cat /sys/bus/pci/devices/0000:01:00.0/power/runtime_status` to see it `suspended`.
+
+## 8.8. **NOT SURE IT WORK** Complete iGPU-Only Mode (Optional)
+If you want to completely hide the NVIDIA GPU from the OS (similar to Lenovo Vantage's iGPU mode) so that it is never powered on under any circumstances, you can use **EnvyControl**.
+*(Note: With RTD3 Deep Sleep configured in 8.7, your NVIDIA card already consumes 0W. EnvyControl is only needed if you maystrictly want to disable it at the hardware level and don't plan to use `prime-run`).
+This may cause window dual boot false to find NVIDIA GPU too*
+
+1. Install EnvyControl:
+   ```bash
+   yay -S envycontrol
+   ```
+2. Switch modes:
+   - **Integrated Only (NVIDIA completely disabled):**
+     ```bash
+     sudo envycontrol -s integrated
+     ```
+   - **Hybrid Mode (Re-enable NVIDIA + `prime-run`):**
+     ```bash
+     sudo envycontrol -s hybrid
+     ```
+3. **Reboot** the machine to apply the hardware changes.
 
 ---
 
@@ -1518,6 +1611,22 @@ In addition to clearing the pacman cache (`paccache`) and user cache (`~/.cache/
 ```bash
 sudo journalctl --vacuum-size=50M    # Keep only the latest 50MB of logs
 ```
+
+## 10.9. Troubleshooting: Slow Login / Hang on Logout (Systemd Stop Job)
+
+**Issue:** When logging out (e.g., using `uwsm stop`), logging back in takes a very long time (up to 90 seconds). This happens because systemd waits for up to 90 seconds for stuck user services to close before forcefully killing them.
+
+**Fix:** Reduce the default `Stop` timeout to 10 seconds.
+1. Run these two commands to automatically replace the 90s timeout with 10s in the systemd configuration files:
+   ```bash
+   sudo sed -i 's/#DefaultTimeoutStopSec=90s/DefaultTimeoutStopSec=10s/g' /etc/systemd/system.conf
+   sudo sed -i 's/#DefaultTimeoutStopSec=90s/DefaultTimeoutStopSec=10s/g' /etc/systemd/user.conf
+   ```
+   *(Note: Do **NOT** change `DefaultTimeoutStartSec`, as some services genuinely need more time to start up.)*
+2. Reload systemd configurations (or just reboot):
+   ```bash
+   sudo systemctl daemon-reload && systemctl --user daemon-reload
+   ```
 
 ---
 

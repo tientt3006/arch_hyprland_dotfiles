@@ -108,6 +108,7 @@ This setup aggressively minimizes NVIDIA dGPU wake-ups on hybrid laptops:
 - **SDDM on X11** is configured to explicitly ignore the NVIDIA GPU (`AutoAddGPU false`), keeping it at 0W.
 - **`vulkan-intel`** is installed so Vulkan apps default to Intel instead of waking NVIDIA.
 - **SwayNC** is forced onto Intel via a systemd override (`DRI_PRIME=0` + EGL + Vulkan env vars).
+- **PRIME Offloading**: The system completely ignores the NVIDIA GPU by default. Use `prime-run` (from the `nvidia-prime` package) to selectively run heavy apps (games, OBS, Blender) on the dGPU.
 - **TLP** auto-suspends PCI, Wi-Fi, and SSD while keeping USB (mouse) and audio always on.
 - **Blur is disabled** for SwayNC layers to prevent GPU stutter on notifications.
 

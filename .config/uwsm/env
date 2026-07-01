@@ -4,12 +4,17 @@ GVIM_ENABLE_WAYLAND=1
 MOZ_ENABLE_WAYLAND=1
 XMODIFIERS=@im=fcitx
 
-XDG_CURRENT_DESKTOP=Hyprland
-XDG_SESSION_TYPE=wayland
-XDG_SESSION_DESKTOP=Hyprland
+# No need because now using UWSM
+# XDG_CURRENT_DESKTOP=Hyprland
+# XDG_SESSION_TYPE=wayland
+# XDG_SESSION_DESKTOP=Hyprland
 
-# NVIDIA
-LIBVA_DRIVER_NAME=nvidia
-__GLX_VENDOR_LIBRARY_NAME=nvidia
-NVD_BACKEND=direct
+# NVIDIA, no need for better power saving
+# LIBVA_DRIVER_NAME=nvidia
+# __GLX_VENDOR_LIBRARY_NAME=nvidia
+# NVD_BACKEND=direct
+
+# Force Aquamarine (Hyprland backend) use Intel iGPU but may be no need to force it
+# currentlly it use intell allready, if no use a second display.
+# AQ_DRM_DEVICES=/dev/dri/by-path/pci-0000:00:02.0-card
 

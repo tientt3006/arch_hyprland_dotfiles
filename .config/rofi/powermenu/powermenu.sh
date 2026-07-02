@@ -69,7 +69,8 @@ run_cmd() {
 			amixer set Master mute
 			systemctl suspend
 		elif [[ $1 == '--logout' ]]; then
-			hyprctl dispatch exit
+			uwsm stop
+			# ~/.config/hypr/scripts/sys_logout.sh
 		fi
 	else
 		exit 0

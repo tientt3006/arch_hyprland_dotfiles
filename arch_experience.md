@@ -779,6 +779,21 @@ The ultimate 2-way offline sync daemon for OneDrive on Linux.
    onedrive --sync --resync
    systemctl --user enable --now onedrive
    ```
+`systemctl --user disable onedrive.service`
+`systemctl --user edit onedrive.service`
+
+Write this to make it turn off gracefully with graphical turned off.
+```bash
+[Unit]
+PartOf=graphical-session.target
+
+[Service]
+KillSignal=SIGINT
+SuccessExitStatus=SIGINT 2
+```
+
+`systemctl --user daemon-reload`
+
 
 4. **How to Update Sync List Later:**
    If you modify `~/.config/onedrive/sync_list` to add or remove folders, you MUST resync and restart the service:
@@ -844,16 +859,24 @@ Mounts Google Drive directly into your file manager without taking up local disk
    [Unit]
    Description=Rclone Mount Google Drive
    After=network-online.target
+   Wants=network-online.target
+   PartOf=graphical-session.target
 
    [Service]
    Type=simple
    ExecStart=/usr/bin/rclone mount gdrive: %h/GDrive --drive-root-folder-id "YOUR_FOLDER_ID" --vfs-cache-mode full
-   ExecStop=/bin/fusermount3 -u %h/GDrive
+   ExecStop=/usr/bin/fusermount3 -u %h/GDrive
+   ProtectSystem=full
+   ProtectHostname=true
+   ProtectKernelTunables=true
+   ProtectControlGroups=true
+   RestrictRealtime=true
    Restart=on-failure
    RestartSec=5
 
    [Install]
-   WantedBy=default.target
+   WantedBy=graphical-session.target
+
    ```
 3. Enable and start the service:
    ```bash
@@ -878,21 +901,34 @@ You need to create /GDrive_bisync folder
 ```ini
 [Unit]
 Description=Rclone 2-way Sync for Google Drive
+After=network-online.target
+Wants=network-online.target
+PartOf=graphical-session.target
+
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/rclone bisync gdrive: %h/GDrive_bisync --drive-root-folder-id "YOUR_FOLDER_ID" --exclude "/YOUR_EXCLUDE_FOLDER/**" --exclude "/YOUR_EXCLUDE_FOLDER/**" -q --drive-acknowledge-abuse
+ProtectSystem=full
+ProtectHostname=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictRealtime=true
+Restart=on-failure
+RestartSec=5
+SuccessExitStatus=143
 ```
 Create `~/.config/systemd/user/rclone-bisync.timer`:
 ```ini
 [Unit]
 Description=Run Rclone Bisync every 5 minutes
+PartOf=graphical-session.target
 [Timer]
-OnBootSec=1min
+OnActiveSec=1min
 OnUnitActiveSec=5min
 Unit=rclone-bisync.service
 [Install]
-WantedBy=timers.target
-   ```
+WantedBy=graphical-session.target
+```
 To start it manually: `systemctl --user start rclone-bisync.service`
 3. Enable it:
    ```bash
@@ -1627,7 +1663,6 @@ sudo journalctl --vacuum-size=50M    # Keep only the latest 50MB of logs
    ```bash
    sudo systemctl daemon-reload && systemctl --user daemon-reload
    ```
-
 ---
 
 # Part 11: Tips for Windows Switchers

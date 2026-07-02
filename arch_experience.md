@@ -788,6 +788,7 @@ Write this to make it turn off gracefully with graphical turned off.
 PartOf=graphical-session.target
 
 [Service]
+ExecStartPre= #fix lag time when hyprland up and uwsm have to wait 15s (default of onedrive) for onedrive up
 KillSignal=SIGINT
 SuccessExitStatus=SIGINT 2
 ```
@@ -873,6 +874,7 @@ Mounts Google Drive directly into your file manager without taking up local disk
    RestrictRealtime=true
    Restart=on-failure
    RestartSec=5
+   TimeoutStopSec=90
 
    [Install]
    WantedBy=graphical-session.target
@@ -916,6 +918,7 @@ RestrictRealtime=true
 Restart=on-failure
 RestartSec=5
 SuccessExitStatus=143
+TimeoutStopSec=90
 ```
 Create `~/.config/systemd/user/rclone-bisync.timer`:
 ```ini
@@ -1549,6 +1552,13 @@ systemd-analyze critical-chain      # Detailed tree of boot bottlenecks
 systemctl --failed                  # Check for crashed services
 systemctl list-timers               # View scheduled tasks (fstrim, paccache)
 journalctl -p err -b                # View error logs from current boot session
+journalctl -b | grep -i "login" | tail -n 20 
+systemd-analyze --user critical-chain graphical-session.target
+systemd-analyze --user critical-chain default.target
+systemd-analyze --user
+ystemd-analyze critical-chain 
+systemctl --user list-dependencies graphical-session.target 
+
 ```
 
 Or turn on paccache remove timer (keep 2 or 3 nearest version for rollback): 
@@ -1663,6 +1673,7 @@ sudo journalctl --vacuum-size=50M    # Keep only the latest 50MB of logs
    ```bash
    sudo systemctl daemon-reload && systemctl --user daemon-reload
    ```
+or just simple: `mkdir -p ~/.config/systemd && echo -e "[Manager]\nDefaultTimeoutStopSec=10s" > ~/.config/systemd/user.conf`
 ---
 
 # Part 11: Tips for Windows Switchers

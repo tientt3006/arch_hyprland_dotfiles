@@ -118,10 +118,10 @@ source "$ZSH/oh-my-zsh.sh"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # --- Custom Aliases ---
-alias ls="eza --icons --group-directories-first"
-alias ll="eza -lh --icons --group-directories-first"
-alias la="eza -la --icons --group-directories-first"
-alias cat="bat"
+alias ls="eza --group-directories-first"
+alias ll="eza -lh --group-directories-first"
+alias la="eza -la --group-directories-first"
+alias cat="bat -p"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

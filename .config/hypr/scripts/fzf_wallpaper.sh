@@ -1,6 +1,10 @@
 #!/bin/bash
-# Tự resize cửa sổ về 90%
-sleep 0.15 && hyprctl dispatch resizeactive exact 90% 80% &> /dev/null &
+# Lấy kích thước monitor để tính 90% 80% thay cho cú pháp exact % cũ (không dùng được trong Lua mode)
+MON_W=$(hyprctl monitors -j | jq '.[] | select(.focused) | .width / .scale' | awk '{print int($1)}')
+MON_H=$(hyprctl monitors -j | jq '.[] | select(.focused) | .height / .scale' | awk '{print int($1)}')
+RW=$(awk "BEGIN {print int($MON_W * 0.9)}")
+RH=$(awk "BEGIN {print int($MON_H * 0.8)}")
+sleep 0.15 && hyprctl dispatch "hl.dsp.window.resize({x=$RW, y=$RH})" &> /dev/null &
 
 WALLPAPER_DIR="$HOME/GDrive_bisync/picture/Saved pics/arch_wallpapers"
 

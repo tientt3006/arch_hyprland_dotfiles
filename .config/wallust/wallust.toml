@@ -4,6 +4,7 @@ palette = "dark16"
 
 [templates]
 hyprland = { template = 'hyprland.conf.tera', target = '~/.config/hypr/wallust-colors.conf' }
+hyprland_lua = { template = 'hyprland.lua.tera', target = '~/.config/hypr/wallust-colors.lua' }
 kitty = { template = 'kitty.conf.tera', target = '~/.config/kitty/wallust-colors.conf' }
 waybar = { template = 'waybar.css.tera', target = '~/.config/waybar/wallust-colors.css' }
 rofi = { template = 'rofi.rasi.tera', target = '~/.config/rofi/wallust-colors.rasi' }

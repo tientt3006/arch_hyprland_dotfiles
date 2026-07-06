@@ -5,6 +5,7 @@
     "margin-top": 10,
     "margin-left": 10,
     "margin-right": 10,
+    "margin-bottom": 0,
     "spacing": 4,
     "modules-left": [
         // "custom/launcher",

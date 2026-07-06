@@ -12,8 +12,12 @@ if ! command -v fzf &> /dev/null || ! command -v rg &> /dev/null || ! command -v
     exit 1
 fi
 
-# Tự resize cửa sổ về 90%
-sleep 0.15 && hyprctl dispatch resizeactive exact 90% 80% &> /dev/null &
+# Lấy kích thước monitor để tính 90% 80% thay cho cú pháp exact % cũ (không dùng được trong Lua mode)
+MON_W=$(hyprctl monitors -j | jq '.[] | select(.focused) | .width / .scale' | awk '{print int($1)}')
+MON_H=$(hyprctl monitors -j | jq '.[] | select(.focused) | .height / .scale' | awk '{print int($1)}')
+RW=$(awk "BEGIN {print int($MON_W * 0.9)}")
+RH=$(awk "BEGIN {print int($MON_H * 0.8)}")
+sleep 0.15 && hyprctl dispatch "hl.dsp.window.resize({x=$RW, y=$RH})" &> /dev/null &
 
 # Giao diện Catppuccin Mocha cho FZF
 export FZF_DEFAULT_OPTS="--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
@@ -130,14 +134,14 @@ FILE=$(echo "$SELECTED" | cut -d: -f1)
 LINE=$(echo "$SELECTED" | cut -d: -f2)
 COL=$(echo "$SELECTED" | cut -d: -f3)
 
-# Sử dụng hyprctl dispatch exec để mở cửa sổ hoàn toàn độc lập với script hiện tại
+# Sử dụng hyprctl dispatch với cú pháp Lua mode
 # 1. Neovim (Siêu nhẹ, cực nhanh, nhảy đúng số dòng)
 if command -v nvim &> /dev/null; then
-    hyprctl dispatch exec "kitty -e nvim \"+call cursor($LINE, $COL)\" \"$FILE\""
+    hyprctl dispatch "hl.dsp.exec_cmd('kitty -e nvim \"+call cursor($LINE, $COL)\" \"$FILE\"')"
 # 2. Hệ thống mặc định (File txt/md thường mở Text Editor)
 elif command -v gio &> /dev/null; then
-    hyprctl dispatch exec "gio open \"$FILE\""
+    hyprctl dispatch "hl.dsp.exec_cmd('gio open \"$FILE\"')"
 # 3. Fallback VS Code
 elif command -v code &> /dev/null; then
-    hyprctl dispatch exec "code -g \"$FILE:$LINE:$COL\""
+    hyprctl dispatch "hl.dsp.exec_cmd('code -g \"$FILE:$LINE:$COL\"')"
 fi

@@ -12,8 +12,12 @@ if ! command -v fzf &> /dev/null || ! command -v fd &> /dev/null; then
     exit 1
 fi
 
-# Tự resize cửa sổ về 90% để hiện ở giữa màn hình
-sleep 0.15 && hyprctl dispatch resizeactive exact 90% 80% &> /dev/null &
+# Tự resize cửa sổ về 90% để hiện ở giữa màn hình (thay cú pháp exact %)
+MON_W=$(hyprctl monitors -j | jq '.[] | select(.focused) | .width / .scale' | awk '{print int($1)}')
+MON_H=$(hyprctl monitors -j | jq '.[] | select(.focused) | .height / .scale' | awk '{print int($1)}')
+RW=$(awk "BEGIN {print int($MON_W * 0.9)}")
+RH=$(awk "BEGIN {print int($MON_H * 0.8)}")
+sleep 0.15 && hyprctl dispatch "hl.dsp.window.resize({x=$RW, y=$RH})" &> /dev/null &
 
 # Giao diện Catppuccin Mocha cho FZF
 export FZF_DEFAULT_OPTS="--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
@@ -86,10 +90,10 @@ SELECTION=$(fd . "$HOME" --hidden "${EXCLUDES[@]}" 2>/dev/null | \
 
 if [ -d "$SELECTION" ]; then
     # Nếu là thư mục, mở bằng Thunar
-    hyprctl dispatch exec "uwsm app -- thunar \"$SELECTION\""
+    hyprctl dispatch "hl.dsp.exec_cmd('uwsm app -- thunar \"$SELECTION\"')"
 else
     # Nếu là file, mở bằng ứng dụng mặc định
-    hyprctl dispatch exec "uwsm app -- gio open \"$SELECTION\""
+    hyprctl dispatch "hl.dsp.exec_cmd('uwsm app -- gio open \"$SELECTION\"')"
 fi
 
 exit 0

@@ -24,9 +24,9 @@ if [[ -n "$SELECTED" ]]; then
     IMG_PATH="$WALLPAPER_DIR/$SELECTED"
     # Thay đổi hình nền, hiệu ứng phóng to từ giữa màn hình
     uwsm app -- awww img "$IMG_PATH" --transition-type random --transition-step 90 --transition-fps 60
-    wallust run -q "$IMG_PATH"
+    # wallust run -q "$IMG_PATH"
     # hyprctl reload
-    killall -SIGUSR2 waybar
-    swaync-client -rs
+    # killall -SIGUSR2 waybar
+    # swaync-client -rs
     # killall -SIGUSR1 kitty
 fi

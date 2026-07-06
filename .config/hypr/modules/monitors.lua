@@ -8,6 +8,8 @@ hl.monitor({
     scale    = 1,
 })
 
+require("monitors")
+
 hl.monitor({
     output = "eDP-1",
     mode = "1920x1080@60.0",

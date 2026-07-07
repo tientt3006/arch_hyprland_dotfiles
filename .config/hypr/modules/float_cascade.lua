@@ -115,6 +115,9 @@ function M.toggle_all_float()
             hl.dispatch(hl.dsp.window.resize({ x = target_w, y = target_h, window = w }))
             hl.dispatch(hl.dsp.window.move({ x = pos_x, y = pos_y, window = w }))
         end
+
+        -- Đảm bảo cửa sổ đang focus được đẩy lên trên cùng
+        hl.dispatch(hl.dsp.window.bring_to_top())
     end
 end
 

@@ -31,8 +31,8 @@ hl.bind(mainMod .. " + O",         hl.dsp.layout("togglesplit"))
 
 -- System
 hl.bind("ALT + F4",                    hl.dsp.exec_cmd("pkill rofi || $HOME/.config/rofi/powermenu/powermenu.sh"))
-hl.bind(mainMod .. " + CONTROL + Q",   hl.dsp.exec_cmd("uwsm stop"))
-hl.bind(mainMod .. " + L",             hl.dsp.exec_cmd("loginctl lock-session"))
+hl.bind(mainMod .. " + CONTROL + L",  hl.dsp.exec_cmd("uwsm stop"))
+hl.bind(mainMod .. " + ALT + L",      hl.dsp.exec_cmd("loginctl lock-session"))
 
 -- Custom floating logic
 hl.bind(mainMod .. " + S", float_cascade.toggle_all_float)
@@ -57,8 +57,63 @@ hl.bind(mainMod .. " + SHIFT + j", hl.dsp.window.move({ direction = "down" }))
 hl.bind(mainMod .. " + SHIFT + k", hl.dsp.window.move({ direction = "up" }))
 hl.bind(mainMod .. " + SHIFT + l", hl.dsp.window.move({ direction = "right" }))
 
--- Window switching
-hl.bind("ALT + Tab", hl.dsp.focus({ window = "previous" }))
+-- Window switching (Windows-like Alt-Tab)
+-- Lần 1: focus window gần nhất (qua lại 2 window)
+-- Giữ Alt + Tab liên tiếp: cycle qua tất cả window
+do
+    local cycling = false
+    local reset_timer = nil
+
+    local function reset_state()
+        cycling = false
+    end
+
+    local function focus_last()
+        local last = hl.get_last_window()
+        if last then
+            hl.dispatch(hl.dsp.focus({ window = last }))
+            hl.dispatch(hl.dsp.window.bring_to_top())
+        end
+    end
+
+    local function on_alttab()
+        if reset_timer then
+            reset_timer:set_enabled(false)
+        end
+
+        if not cycling then
+            -- Lần đầu: nhảy về window gần nhất
+            focus_last()
+            cycling = true
+        else
+            -- Giữ Alt, Tab tiếp: cycle qua tất cả window
+            hl.dispatch(hl.dsp.window.cycle_next())
+            hl.dispatch(hl.dsp.window.bring_to_top())
+        end
+
+        -- Nếu không nhấn gì trong 400ms, coi như nhả Alt -> reset
+        reset_timer = hl.timer(reset_state, { timeout = 400, type = "oneshot" })
+    end
+
+    local function on_alttab_prev()
+        if reset_timer then
+            reset_timer:set_enabled(false)
+        end
+
+        if not cycling then
+            focus_last()
+            cycling = true
+        else
+            hl.dispatch(hl.dsp.window.cycle_next({ prev = true }))
+            hl.dispatch(hl.dsp.window.bring_to_top())
+        end
+
+        reset_timer = hl.timer(reset_state, { timeout = 400, type = "oneshot" })
+    end
+
+    hl.bind("ALT + Tab",         on_alttab)
+    hl.bind("ALT + SHIFT + Tab", on_alttab_prev)
+end
 
 -- Workspaces
 for i = 1, 9 do

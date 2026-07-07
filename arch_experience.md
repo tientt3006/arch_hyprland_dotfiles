@@ -1050,6 +1050,8 @@ layers:
   bindings:
     # Tap for normal capslock, hold for 400ms to enter mouse mode
     capslock: tap-hold capslock ; layer mouse ; 400
+    # Prevent default esc behavior to stop notification spam
+    esc: esc
 - name: mouse
   passThrough: true
   bindings:
@@ -1089,7 +1091,7 @@ Description=Mouseless keyboard-driven mouse
 After=graphical-session.target
 
 [Service]
-ExecStart=/bin/bash -c '/usr/bin/mouseless -d 2>&1 | while read -r line; do if [[ "$line" == *"Switching to layer mouse"* ]]; then notify-send -a "Mouseless" -t 1000 "Mouse Mode" "ON"; elif [[ "$line" == *"Switching to layer initial"* ]]; then notify-send -a "Mouseless" -t 1000 "Mouse Mode" "OFF"; fi; done'
+ExecStart=/bin/bash -c 'state="OFF"; /usr/bin/mouseless -d 2>&1 | while read -r line; do if [[ "$line" == *"Switching to layer mouse"* ]]; then if [[ "$state" != "ON" ]]; then notify-send -a "Mouseless" -t 1000 "Mouse Mode" "ON"; state="ON"; fi; elif [[ "$line" == *"Switching to layer initial"* ]]; then if [[ "$state" != "OFF" ]]; then notify-send -a "Mouseless" -t 1000 "Mouse Mode" "OFF"; state="OFF"; fi; fi; done'
 Restart=on-failure
 RestartSec=3
 

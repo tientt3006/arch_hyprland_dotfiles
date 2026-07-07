@@ -148,3 +148,19 @@ bindkey '^[OB' history-substring-search-down
 autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
 export KEYTIMEOUT=1
+
+# Hyprland recovery từ TTY khi màn hình đen sau suspend/wake
+# Dùng: switch sang TTY khác (Ctrl+Alt+F2) → gõ `hypr-recover`
+hypr-recover() {
+  export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+  local sig
+  sig=$(ls /run/user/$(id -u)/hypr/ 2>/dev/null | head -1)
+  if [[ -z "$sig" ]]; then
+    echo "Không tìm thấy instance Hyprland đang chạy."
+    return 1
+  fi
+  export HYPRLAND_INSTANCE_SIGNATURE="$sig"
+  echo "Instance: $sig"
+  hyprctl dispatch "hl.dsp.dpms('on')"
+  echo "Màn hình đã bật. Ctrl+Alt+F1 để quay lại session Hyprland."
+}

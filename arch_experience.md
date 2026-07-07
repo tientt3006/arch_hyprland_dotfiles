@@ -1727,7 +1727,59 @@ sudo journalctl --vacuum-size=50M    # Keep only the latest 50MB of logs
    sudo systemctl daemon-reload && systemctl --user daemon-reload
    ```
 or just simple: `mkdir -p ~/.config/systemd && echo -e "[Manager]\nDefaultTimeoutStopSec=10s" > ~/.config/systemd/user.conf`
----
+
+## 10.10. Troubleshooting: Black Screen After Suspend/Wake — Control Hyprland from TTY
+
+**Scenario:** After waking from suspend, the screen is completely black. Hyprland is still running but you cannot see or interact with it. You can still switch to another TTY (`Ctrl+Alt+F2`).
+
+**Root cause (Hyprland Lua mode):** `hyprctl dispatch "hl.dsp.dpms('...')"` acts as a **toggle** (argument `'on'`/`'off'` is ignored — it always just flips the current state). If both `after_sleep_cmd` AND `on-resume` of the dpms listener fire after wake, they double-toggle and leave the screen off. **Fix:** Remove `after_sleep_cmd` from `hypridle.conf` — the `on-resume` of the dpms listener already handles turning the display back on.
+
+> **Note:** `hyprctl eval "hl.dsp.dpms('...')"` returns `ok` but **does nothing** — it cannot control DPMS. Only `hyprctl dispatch` works.
+
+### Recovery: Turn the Screen Back On from TTY
+
+Switch to a free TTY (`Ctrl+Alt+F2`), log in, then run:
+
+```bash
+# Step 1: Find the running Hyprland instance signature
+hyprctl instances
+# Output example:
+# instance a0136d8c04687bb36eb8a28eb9d1ff92aea99704_1783431067_1016137192:
+#         wl socket: wayland-1
+
+# Step 2: Export the required environment variables
+export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+export HYPRLAND_INSTANCE_SIGNATURE="<paste the full instance ID here>"
+
+# Step 3: Toggle the display back on (dispatch toggles state)
+# If screen is off, one call turns it on:
+hyprctl dispatch "hl.dsp.dpms('on')"
+```
+
+Then switch back to your session TTY (`Ctrl+Alt+F1` or whichever VT Hyprland runs on, usually F1 or F4).
+
+### Faster Alternative: `hypr-recover` function in `.zshrc`
+
+Already added to `~/.zshrc`. From any TTY, just run:
+
+```bash
+hypr-recover
+# → Automatically finds the Hyprland instance, sets env vars, and toggles screen on
+# → Then: Ctrl+Alt+F1 to return to your session
+```
+
+The function:
+```bash
+hypr-recover() {
+  export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+  local sig
+  sig=$(ls /run/user/$(id -u)/hypr/ 2>/dev/null | head -1)
+  export HYPRLAND_INSTANCE_SIGNATURE="$sig"
+  hyprctl dispatch "hl.dsp.dpms('on')"
+  echo "Màn hình đã bật. Ctrl+Alt+F1 để quay lại session Hyprland."
+}
+```
+
 
 # Part 11: Tips for Windows Switchers
 

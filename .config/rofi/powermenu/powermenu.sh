@@ -67,6 +67,8 @@ run_cmd() {
 		elif [[ $1 == '--suspend' ]]; then
 			mpc -q pause
 			amixer set Master mute
+			loginctl lock-session
+			sleep 1
 			systemctl suspend
 		elif [[ $1 == '--logout' ]]; then
 			uwsm stop

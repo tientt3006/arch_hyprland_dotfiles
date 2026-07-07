@@ -27,27 +27,22 @@ function M.swap_ws(target)
     end
 end
 
-function M.setup_zoom(mainMod)
-    local function handle_zoom(direction)
-        local current = hl.get_config("cursor:zoom_factor") or 1.0
-        if type(current) ~= "number" then current = 1.0 end
-        
-        if direction == "in" then
-            current = current + 0.25
-        else
-            current = current - 0.25
-            if current < 1.0 then current = 1.0 end
-        end
-        
-        hl.config({
-            cursor = {
-                zoom_factor = current
-            }
-        })
+function M.zoom(direction)
+    local current = hl.get_config("cursor:zoom_factor") or 1.0
+    if type(current) ~= "number" then current = 1.0 end
+    
+    if direction == "in" then
+        current = current + 0.25
+    else
+        current = current - 0.25
+        if current < 1.0 then current = 1.0 end
     end
-
-    hl.bind(mainMod .. " + SHIFT + mouse_up",   function() handle_zoom("in") end)
-    hl.bind(mainMod .. " + SHIFT + mouse_down", function() handle_zoom("out") end)
+    
+    hl.config({
+        cursor = {
+            zoom_factor = current
+        }
+    })
 end
 
 function M.setup_alttab()
@@ -101,8 +96,10 @@ function M.setup_alttab()
         reset_timer = hl.timer(reset_state, { timeout = 400, type = "oneshot" })
     end
 
-    hl.bind("ALT + Tab",         on_alttab)
-    hl.bind("ALT + SHIFT + Tab", on_alttab_prev)
+    return {
+        next = on_alttab,
+        prev = on_alttab_prev
+    }
 end
 
 return M

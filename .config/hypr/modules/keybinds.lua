@@ -23,7 +23,7 @@ hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t -sw"))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("pkill -SIGUSR1 waybar"))
 
 -- Window management
-hl.bind(mainMod .. " + CONTROL + W", hl.dsp.window.close())
+hl.bind(mainMod .. " + CTRL + W", hl.dsp.window.close())
 hl.bind(mainMod .. " + ALT + S",   hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + F",         hl.dsp.window.fullscreen({ action = "toggle" }))
 hl.bind(mainMod .. " + P",         hl.dsp.window.pseudo())
@@ -31,8 +31,11 @@ hl.bind(mainMod .. " + O",         hl.dsp.layout("togglesplit"))
 
 -- System
 hl.bind("ALT + F4",                    hl.dsp.exec_cmd("pkill rofi || $HOME/.config/rofi/powermenu/powermenu.sh"))
-hl.bind(mainMod .. " + CONTROL + L",  hl.dsp.exec_cmd("uwsm stop"))
-hl.bind(mainMod .. " + ALT + L",      hl.dsp.exec_cmd("loginctl lock-session"))
+hl.bind(mainMod .. " + CTRL + SHIFT + L",      hl.dsp.exec_cmd("loginctl lock-session"))
+hl.bind(mainMod .. " + CTRL + ALT + L",  hl.dsp.exec_cmd("uwsm stop"))
+hl.bind(mainMod .. " + CTRL + SHIFT + U", hl.dsp.exec_cmd("loginctl lock-session && sleep 1 && systemctl suspend"))
+hl.bind(mainMod .. " + CTRL + ALT + U",   hl.dsp.exec_cmd("systemctl poweroff"))
+hl.bind(mainMod .. " + CTRL + SHIFT + R", hl.dsp.exec_cmd("systemctl reboot"))
 
 -- Custom floating logic
 hl.bind(mainMod .. " + S", float_cascade.toggle_all_float)
@@ -52,13 +55,19 @@ hl.bind(mainMod .. " + k",     hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + l",     hl.dsp.focus({ direction = "right" }))
 
 -- Move window
+hl.bind(mainMod .. " + SHIFT + left", hl.dsp.window.move({ direction = "left" }))
+hl.bind(mainMod .. " + SHIFT + down", hl.dsp.window.move({ direction = "down" }))
+hl.bind(mainMod .. " + SHIFT + up", hl.dsp.window.move({ direction = "up" }))
+hl.bind(mainMod .. " + SHIFT + right", hl.dsp.window.move({ direction = "right" }))
 hl.bind(mainMod .. " + SHIFT + h", hl.dsp.window.move({ direction = "left" }))
 hl.bind(mainMod .. " + SHIFT + j", hl.dsp.window.move({ direction = "down" }))
 hl.bind(mainMod .. " + SHIFT + k", hl.dsp.window.move({ direction = "up" }))
 hl.bind(mainMod .. " + SHIFT + l", hl.dsp.window.move({ direction = "right" }))
 
 -- Window switching (Windows-like Alt-Tab via submap)
-ws_scripts.setup_alttab()
+local alttab = ws_scripts.setup_alttab()
+hl.bind("ALT + Tab",         alttab.next)
+hl.bind("ALT + SHIFT + Tab", alttab.prev)
 
 -- Workspaces
 for i = 1, 9 do
@@ -78,28 +87,41 @@ hl.bind(mainMod .. " + SHIFT + ALT + 0",   ws_scripts.swap_ws(10))
 -- Mouse: scroll workspace
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
 hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
+hl.bind(mainMod .. " + ALT + l", hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(mainMod .. " + ALT + h",   hl.dsp.focus({ workspace = "e-1" }))
 
 -- Mouse: move / resize window
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Zoom
-ws_scripts.setup_zoom(mainMod)
+hl.bind(mainMod .. " + ALT + mouse_up",   function() ws_scripts.zoom("in") end)
+hl.bind(mainMod .. " + ALT + mouse_down", function() ws_scripts.zoom("out") end)
+hl.bind(mainMod .. " + ALT + equal",      function() ws_scripts.zoom("in") end)
+hl.bind(mainMod .. " + ALT + minus",      function() ws_scripts.zoom("out") end)
+
 
 -- Brightness
 hl.bind("XF86MonBrightnessUp",          hl.dsp.exec_cmd("brightnessctl set +5%"),  { locked = true, repeating = true })
 hl.bind("XF86MonBrightnessDown",        hl.dsp.exec_cmd("brightnessctl set 5%-"),  { locked = true, repeating = true })
-hl.bind(mainMod .. " + CTRL + U",       hl.dsp.exec_cmd("brightnessctl set +5%"),  { locked = true, repeating = true })
-hl.bind(mainMod .. " + CTRL + D",       hl.dsp.exec_cmd("brightnessctl set 5%-"),  { locked = true, repeating = true })
+hl.bind(mainMod .. " + CTRL + equal",      hl.dsp.exec_cmd("brightnessctl set +5%"),  { locked = true, repeating = true })
+hl.bind(mainMod .. " + CTRL + minus",    hl.dsp.exec_cmd("brightnessctl set 5%-"),  { locked = true, repeating = true })
+hl.bind(mainMod .. " + CTRL + plus",       hl.dsp.exec_cmd("brightnessctl set +5%"),  { locked = true, repeating = true })
+hl.bind(mainMod .. " + CTRL + underscore", hl.dsp.exec_cmd("brightnessctl set 5%-"),  { locked = true, repeating = true })
 
 -- Volume
 hl.bind("XF86AudioRaiseVolume",     hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ --limit 1.5"), { locked = true, repeating = true })
 hl.bind("XF86AudioLowerVolume",     hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),             { locked = true, repeating = true })
 hl.bind("XF86AudioMute",            hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),            { locked = true })
-hl.bind(mainMod .. " + SHIFT + U",  hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ --limit 1.5"), { locked = true, repeating = true })
-hl.bind(mainMod .. " + SHIFT + D",  hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),             { locked = true, repeating = true })
+hl.bind(mainMod .. " + SHIFT + equal", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ --limit 1.5"), { locked = true, repeating = true })
+hl.bind(mainMod .. " + SHIFT + minus", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),           { locked = true, repeating = true })
+hl.bind(mainMod .. " + SHIFT + plus",  hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ --limit 1.5"), { locked = true, repeating = true })
+hl.bind(mainMod .. " + SHIFT + underscore", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),      { locked = true, repeating = true })
 hl.bind(mainMod .. " + M",  hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
 
 -- Lid switch
-hl.bind("switch:on:Lid Switch",  hl.dsp.exec_cmd("loginctl lock-session && hyprctl dispatch \"hl.dsp.dpms('off')\""), { locked = true })
-hl.bind("switch:off:Lid Switch", hl.dsp.exec_cmd("hyprctl dispatch \"hl.dsp.dpms('on')\""), { locked = true })
+hl.bind("switch:on:Lid Switch", function()
+    os.execute("loginctl lock-session &")
+    hl.dsp.dpms('off')
+end, { locked = true })
+hl.bind("switch:off:Lid Switch", function() hl.dsp.dpms('on') end, { locked = true })

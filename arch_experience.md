@@ -1018,6 +1018,89 @@ screencopy {
 ```bash
 systemctl --user restart xdg-desktop-portal-hyprland
 ```
+
+## 5.14. Keyboard-driven Mouse (Mouseless)
+
+`mouseless` is a Wayland-native, daemon-based tool that intercepts keys at the `/dev/input/` level, allowing full mouse control without crashing Hyprland protocols.
+
+### 1. Install & Configure Permissions
+```bash
+yay -S mouseless-bin
+# Grant your user permission to read keyboard events
+sudo usermod -aG input $USER
+# Allow the input group to create virtual mice via uinput
+echo 'KERNEL=="uinput", GROUP="input", MODE="0660"' | sudo tee /etc/udev/rules.d/99-uinput.rules > /dev/null
+sudo udevadm control --reload-rules && sudo udevadm trigger
+```
+**CRITICAL:** You must Logout and Login again (or Reboot) for the `input` group permissions to apply.
+
+### 2. Configuration (`~/.config/mouseless/config.yaml`)
+Create the config file to use `Capslock` as a `tap-hold` toggle:
+- **Tap Capslock:** Toggles normal uppercase functionality.
+- **Hold Capslock (400ms):** Enters Mouse Mode permanently. Tap Capslock again to exit.
+
+```yaml
+baseMouseSpeed: 750.0
+baseScrollSpeed: 20.0
+mouseAccelerationTime: 200.0
+mouseAccelerationCurve: 2.0
+
+layers:
+- name: initial
+  bindings:
+    # Tap for normal capslock, hold for 400ms to enter mouse mode
+    capslock: tap-hold capslock ; layer mouse ; 400
+- name: mouse
+  passThrough: true
+  bindings:
+    # Exit mouse mode
+    capslock: layer initial
+    esc: layer initial
+    enter: layer initial
+
+    # Movement
+    l: move  1  0
+    h: move -1  0
+    k: move  0 -1
+    j: move  0  1
+    
+    # Scrolling
+    u: scroll up
+    i: scroll down
+
+    # Speeds
+    f: speed 4.0
+    s: speed 0.3
+
+    # Clicks
+    space: button left
+    semicolon: button right
+    apostrophe: button middle
+```
+
+### 3. Create & Enable Systemd Service
+The AUR package `mouseless-bin` does not provide a systemd service file by default. You must create it manually:
+
+```bash
+mkdir -p ~/.config/systemd/user
+cat << 'EOF' > ~/.config/systemd/user/mouseless.service
+[Unit]
+Description=Mouseless keyboard-driven mouse
+After=graphical-session.target
+
+[Service]
+ExecStart=/bin/bash -c '/usr/bin/mouseless -d 2>&1 | while read -r line; do if [[ "$line" == *"Switching to layer mouse"* ]]; then notify-send -a "Mouseless" -t 1000 "Mouse Mode" "ON"; elif [[ "$line" == *"Switching to layer initial"* ]]; then notify-send -a "Mouseless" -t 1000 "Mouse Mode" "OFF"; fi; done'
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target
+EOF
+
+systemctl --user daemon-reload
+systemctl --user enable --now mouseless
+```
+
 ---
 
 # Part 6: Theming (Catppuccin Mocha)

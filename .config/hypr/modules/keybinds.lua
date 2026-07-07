@@ -125,3 +125,4 @@ hl.bind("switch:on:Lid Switch", function()
     hl.dsp.dpms('off')
 end, { locked = true })
 hl.bind("switch:off:Lid Switch", function() hl.dsp.dpms('on') end, { locked = true })
+

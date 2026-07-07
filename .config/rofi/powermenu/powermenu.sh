@@ -65,10 +65,8 @@ run_cmd() {
 		elif [[ $1 == '--reboot' ]]; then
 			systemctl reboot
 		elif [[ $1 == '--suspend' ]]; then
-			mpc -q pause
-			amixer set Master mute
-			loginctl lock-session
-			sleep 1
+			mpc -q pause 2>/dev/null
+			amixer set Master mute 2>/dev/null
 			systemctl suspend
 		elif [[ $1 == '--logout' ]]; then
 			uwsm stop

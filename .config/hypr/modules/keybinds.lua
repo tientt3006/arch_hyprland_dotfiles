@@ -33,7 +33,7 @@ hl.bind(mainMod .. " + O",         hl.dsp.layout("togglesplit"))
 hl.bind("ALT + F4",                    hl.dsp.exec_cmd("pkill rofi || $HOME/.config/rofi/powermenu/powermenu.sh"))
 hl.bind(mainMod .. " + CTRL + SHIFT + L",      hl.dsp.exec_cmd("loginctl lock-session"))
 hl.bind(mainMod .. " + CTRL + ALT + L",  hl.dsp.exec_cmd("uwsm stop"))
-hl.bind(mainMod .. " + CTRL + SHIFT + U", hl.dsp.exec_cmd("loginctl lock-session && sleep 1 && systemctl suspend"))
+hl.bind(mainMod .. " + CTRL + SHIFT + U", hl.dsp.exec_cmd("systemctl suspend"))
 hl.bind(mainMod .. " + CTRL + ALT + U",   hl.dsp.exec_cmd("systemctl poweroff"))
 hl.bind(mainMod .. " + CTRL + SHIFT + R", hl.dsp.exec_cmd("systemctl reboot"))
 

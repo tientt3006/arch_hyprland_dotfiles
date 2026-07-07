@@ -5,7 +5,7 @@ local ws_scripts = require("modules.workspace_scripts")
 local mainMod = "SUPER"
 
 -- Apps
-hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd("uwsm app -- kitty --single-instance"))
+hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd("uwsm app -- kitty --single-instance"))
 hl.bind(mainMod .. " + E",      hl.dsp.exec_cmd("uwsm app -- thunar"))
 hl.bind(mainMod .. " + SPACE",  hl.dsp.exec_cmd("pkill rofi || uwsm app -- rofi -show drun -theme $HOME/.config/rofi/config.rasi"))
 hl.bind(mainMod .. " + Tab",    hl.dsp.exec_cmd("pkill rofi || uwsm app -- rofi -show window -theme $HOME/.config/rofi/config.rasi"))
@@ -14,16 +14,16 @@ hl.bind(mainMod .. " + SHIFT + F", hl.dsp.exec_cmd("uwsm app -- kitty --name flo
 hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd("uwsm app -- kitty --name floating_fzf --class floating_fzf -e $HOME/.config/hypr/scripts/live-grep.sh"))
 
 -- Wallpaper
-hl.bind(mainMod .. " + ALT + F", hl.dsp.exec_cmd("uwsm app -- kitty --name floating_fzf --class floating_fzf -e $HOME/.config/hypr/scripts/fzf_wallpaper.sh"))
+hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("uwsm app -- kitty --name floating_fzf --class floating_fzf -e $HOME/.config/hypr/scripts/fzf_wallpaper.sh"))
 hl.bind(mainMod .. " + ALT + W", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/random_wallpaper.sh"))
-hl.bind(mainMod .. " + ALT + C", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/apply_static_theme.sh"))
+hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/apply_static_theme.sh"))
 
 -- Notifications / waybar
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t -sw"))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("pkill -SIGUSR1 waybar"))
 
 -- Window management
-hl.bind(mainMod .. " + SHIFT + W", hl.dsp.window.close())
+hl.bind(mainMod .. " + CONTROL + W", hl.dsp.window.close())
 hl.bind(mainMod .. " + ALT + S",   hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + F",         hl.dsp.window.fullscreen({ action = "toggle" }))
 hl.bind(mainMod .. " + P",         hl.dsp.window.pseudo())
@@ -38,8 +38,8 @@ hl.bind(mainMod .. " + ALT + L",      hl.dsp.exec_cmd("loginctl lock-session"))
 hl.bind(mainMod .. " + S", float_cascade.toggle_all_float)
 
 -- Screenshots
-hl.bind("Print",                    hl.dsp.exec_cmd("grim - | tee \"$HOME/OneDrive/Pictures/Screenshots/$(date +'%s_grim.png')\" | wl-copy && notify-send \"Screenshot\" \"Fullscreen captured\""))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | tee \"$HOME/OneDrive/Pictures/Screenshots/$(date +'%s_grim.png')\" | wl-copy && notify-send \"Screenshot\" \"Region captured\""))
+hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd("grim - | tee \"$HOME/OneDrive/Pictures/Screenshots/$(date +'%s_grim.png')\" | wl-copy && notify-send \"Screenshot\" \"Fullscreen captured\""))
+hl.bind("Print", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | tee \"$HOME/OneDrive/Pictures/Screenshots/$(date +'%s_grim.png')\" | wl-copy && notify-send \"Screenshot\" \"Region captured\""))
 
 -- Focus
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
@@ -57,63 +57,8 @@ hl.bind(mainMod .. " + SHIFT + j", hl.dsp.window.move({ direction = "down" }))
 hl.bind(mainMod .. " + SHIFT + k", hl.dsp.window.move({ direction = "up" }))
 hl.bind(mainMod .. " + SHIFT + l", hl.dsp.window.move({ direction = "right" }))
 
--- Window switching (Windows-like Alt-Tab)
--- Lần 1: focus window gần nhất (qua lại 2 window)
--- Giữ Alt + Tab liên tiếp: cycle qua tất cả window
-do
-    local cycling = false
-    local reset_timer = nil
-
-    local function reset_state()
-        cycling = false
-    end
-
-    local function focus_last()
-        local last = hl.get_last_window()
-        if last then
-            hl.dispatch(hl.dsp.focus({ window = last }))
-            hl.dispatch(hl.dsp.window.bring_to_top())
-        end
-    end
-
-    local function on_alttab()
-        if reset_timer then
-            reset_timer:set_enabled(false)
-        end
-
-        if not cycling then
-            -- Lần đầu: nhảy về window gần nhất
-            focus_last()
-            cycling = true
-        else
-            -- Giữ Alt, Tab tiếp: cycle qua tất cả window
-            hl.dispatch(hl.dsp.window.cycle_next())
-            hl.dispatch(hl.dsp.window.bring_to_top())
-        end
-
-        -- Nếu không nhấn gì trong 400ms, coi như nhả Alt -> reset
-        reset_timer = hl.timer(reset_state, { timeout = 400, type = "oneshot" })
-    end
-
-    local function on_alttab_prev()
-        if reset_timer then
-            reset_timer:set_enabled(false)
-        end
-
-        if not cycling then
-            focus_last()
-            cycling = true
-        else
-            hl.dispatch(hl.dsp.window.cycle_next({ prev = true }))
-            hl.dispatch(hl.dsp.window.bring_to_top())
-        end
-
-        reset_timer = hl.timer(reset_state, { timeout = 400, type = "oneshot" })
-    end
-
-    hl.bind("ALT + Tab",         on_alttab)
-    hl.bind("ALT + SHIFT + Tab", on_alttab_prev)
-end
+-- Window switching (Windows-like Alt-Tab via submap)
+ws_scripts.setup_alttab()
 
 -- Workspaces
 for i = 1, 9 do
@@ -139,8 +84,7 @@ hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Zoom
-hl.bind(mainMod .. " + SHIFT + mouse_up",   hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/zoom.sh in"))
-hl.bind(mainMod .. " + SHIFT + mouse_down", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/zoom.sh out"))
+ws_scripts.setup_zoom(mainMod)
 
 -- Brightness
 hl.bind("XF86MonBrightnessUp",          hl.dsp.exec_cmd("brightnessctl set +5%"),  { locked = true, repeating = true })
@@ -154,7 +98,8 @@ hl.bind("XF86AudioLowerVolume",     hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_A
 hl.bind("XF86AudioMute",            hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),            { locked = true })
 hl.bind(mainMod .. " + SHIFT + U",  hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ --limit 1.5"), { locked = true, repeating = true })
 hl.bind(mainMod .. " + SHIFT + D",  hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),             { locked = true, repeating = true })
+hl.bind(mainMod .. " + M",  hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
 
 -- Lid switch
 hl.bind("switch:on:Lid Switch",  hl.dsp.exec_cmd("loginctl lock-session && hyprctl dispatch \"hl.dsp.dpms('off')\""), { locked = true })
-hl.bind("switch:off:Lid Switch", hl.dsp.exec_cmd("hyprctl dispatch \"hl.dsp.dpms('on')\""),                           { locked = true })
+hl.bind("switch:off:Lid Switch", hl.dsp.exec_cmd("hyprctl dispatch \"hl.dsp.dpms('on')\""), { locked = true })

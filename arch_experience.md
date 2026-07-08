@@ -608,7 +608,67 @@ Add:
 --enable-blink-features=MiddleClickAutoscroll
 ```
 
-## 5.6. Remote Desktop
+## 5.6. Remote Access (SSH & Remote Desktop)
+
+### Terminal (CLI) — SSH Server
+```bash
+sudo pacman -S openssh
+sudo systemctl enable --now sshd
+ip a      # Find your IP address (e.g., 192.168.x.x)
+```
+On your other machine, connect using:
+```bash
+ssh username@192.168.x.x
+```
+#### Securing SSH (Disable Password Login)
+To prevent brute-force attacks, it is highly recommended to use **SSH Keys** instead of passwords.
+
+**Step 1: Generate a Key Pair (Run on your CLIENT machine)**
+Run this on the machine you are connecting *from* (e.g., Windows PC, Mac, or another Linux):
+```bash
+ssh-keygen -t ed25519
+```
+Press Enter to accept defaults. This creates a public key (`id_ed25519.pub`) and a private key (`id_ed25519`).
+
+**Step 2: Copy the Public Key to the Arch Server (Run on your CLIENT machine)**
+```bash
+ssh-copy-id neitnd@192.168.x.x
+```
+*(Note: If you are using Windows CMD where `ssh-copy-id` isn't available, you can copy the contents of `C:\Users\YourUser\.ssh\id_ed25519.pub` and paste it into `~/.ssh/authorized_keys` on your Arch server).*
+
+**Step 3: Disable Password Authentication (Run on the Arch SERVER)**
+Once you verify that `ssh neitnd@192.168.x.x` logs you in automatically *without* asking for a password, edit the SSH config on Arch:
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+Find the line `PasswordAuthentication` (remove the `#` at the beginning if there is one) and set it to `no`:
+```ini
+PasswordAuthentication no
+```
+
+**Step 4: Restart SSH Service**
+```bash
+sudo systemctl restart sshd
+```
+Your server is now immune to password guessing attacks!
+
+### Remote (Internet) — SSH via Tailscale (Zero-Config VPN)
+To SSH into your Arch machine from anywhere in the world **without** opening router ports (which is insecure and often blocked by ISPs), the industry standard is **Tailscale**. It creates a secure, private network between your devices.
+
+1. **Install and Enable on Arch Server:**
+```bash
+sudo pacman -S tailscale
+sudo systemctl enable --now tailscaled
+sudo tailscale up
+```
+*(This will provide a link in the terminal. Open it in a browser to log in. Once logged in, your Arch machine gets a static, private IP like `100.x.y.z`)*
+
+2. **Connect from your Client:**
+Install Tailscale on your phone, Windows, or Mac. Log in with the same account.
+Find the Arch machine's Tailscale IP (`100.x.y.z`) in the Tailscale app, then connect:
+```bash
+ssh neitnd@100.x.y.z
+```
 
 ### Local (LAN) — WayVNC
 ```bash
@@ -1865,6 +1925,48 @@ hypr-recover() {
 }
 ```
 
+## 10.3. System Debugging & Logging Toolkit
+
+When configuring Linux (like Wayland, Hyprland, or background services), tools will often fail silently. Here are the core commands used to debug, test, and trace errors effectively:
+
+### 1. Systemd Service Management & Status
+Systemd manages both system-wide and user-specific background services.
+- `systemctl status <service>`: Check the health of a system service (e.g., `sshd`, `NetworkManager`). It shows if it's running, crashed, or disabled, and displays the last few log lines.
+- `systemctl --user status <service>`: Check a user-specific service (e.g., `mouseless`, `waybar`). The `--user` flag is crucial for GUI/Wayland apps because they run under your user account, not root.
+- `systemctl --user daemon-reload`: If you edit a `.service` file on disk, you MUST run this command so Systemd re-reads the file before you restart the service.
+
+### 2. Reading Full Logs (Journalctl)
+The `status` command only shows the last 10 lines. To read full logs:
+- `journalctl -u <service>`: Read the entire history of a system service.
+- `journalctl --user -u <service>`: Read the history of a user service.
+- `journalctl --user -u <service> -n 50`: Show only the last 50 lines.
+- `journalctl --user -u <service> -f`: **Follow** the logs in real-time (like a live feed). Press `Ctrl+C` to exit.
+
+### 3. Quick Text Searching (Grep)
+`grep` is used to search for specific text inside files or command outputs.
+- `grep "keyword" /path/to/file`: Search for "keyword" in a file.
+- `grep -n "keyword" /path/to/file`: Same as above, but prints the exact **line numbers**.
+- `journalctl --user \| grep "mouseless"`: Pipe (`|`) the output of the logs into `grep` to only show lines containing "mouseless".
+
+### 4. Viewing & Isolating File Content
+- `cat /path/to/file`: Dump the whole file to the terminal.
+- `head -n 20 /path/to/file`: Read the first 20 lines.
+- `tail -n 20 /path/to/file`: Read the last 20 lines (great for checking the newest errors in a log file).
+
+### 5. Safe Testing & Prototyping
+When you want to test a configuration without breaking your actual system files:
+1. **Create a temporary directory:** `mkdir -p /tmp/test_dir`
+2. **Create a test config using Heredoc:** 
+   ```bash
+   cat << 'EOF' > /tmp/test_dir/config.yaml
+   # Your test code here
+   EOF
+   ```
+3. **Run the program in debug mode pointing to the test file:** e.g., `mouseless -c /tmp/test_dir/config.yaml -d`. If it crashes, it outputs the error without affecting your real setup.
+
+### 6. Reading Manuals
+- `man <command>`: Opens the official manual page for a command (e.g., `man sshd_config`). Press `q` to quit, use `/` to search within the manual.
+- `<command> --help`: A quicker, shorter summary of flags and parameters.
 
 # Part 11: Tips for Windows Switchers
 

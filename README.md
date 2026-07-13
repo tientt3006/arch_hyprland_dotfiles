@@ -31,6 +31,8 @@ Hyprland rice on Arch Linux with **Catppuccin Mocha Blue** theming.
 | Power Management | [TLP](https://linrunner.de/tlp/) |
 | Cloud Sync | [OneDrive client](https://github.com/abraunegg/onedrive) & [Rclone](https://rclone.org/) |
 | Containers | [Docker](https://www.docker.com/) |
+| Mouse Emulation | [Mouseless](https://github.com/jbensmann/mouseless) |
+| Terminal Multiplexer| [Tmux](https://github.com/tmux/tmux) |
 
 ## Structure
 
@@ -57,8 +59,15 @@ neitnd_dotfiles/
 │   ├── rustdesk/           # Remote desktop settings
 │   ├── sublime-text/       # Sublime Text preferences
 │   ├── xdg-desktop-portal/ # Portal priority config (Hyprland > GTK)
+│   ├── mouseless/          # Keyboard-driven mouse daemon
+│   ├── btop/               # System monitor theme and settings
+│   ├── lazygit/            # Git TUI configuration
+│   ├── Thunar/             # File manager custom actions
+│   ├── xfce4/              # XFCE utilities settings
+│   ├── gtk-3.0/ & gtk-4.0/ # GTK theming (Catppuccin Mocha)
+│   ├── Kvantum/ & qt6ct/   # Qt theming to match GTK
 │   ├── onedrive/           # Selective sync configuration (sync_list)
-│   ├── systemd/user/       # Auto-sync timers (Rclone bisync)
+│   ├── systemd/user/       # Custom user services (Rclone, OneDrive, Mouseless, Wallpapers)
 │   ├── chrome-flags.conf   # Chrome flags (middle-click scroll, Ozone/Wayland)
 │   └── mimeapps.list       # Default applications for file types
 ├── .local/
@@ -71,7 +80,9 @@ neitnd_dotfiles/
 ├── .vimrc                  # Vim settings
 ├── .p10k.zsh               # Powerlevel10k prompt theme
 ├── .gitconfig              # Git user config
+├── .env.example            # Template for secret API keys and tokens
 ├── arch_experience.md      # Complete setup & configuration guide (English)
+├── arch_experience_assets/ # Detailed manuals (Tmux, Job Control, etc.)
 └── README.md
 ```
 
@@ -81,7 +92,7 @@ neitnd_dotfiles/
 
 ```bash
 # Clone dotfiles
-git clone https://github.com/neitnd/neitnd_dotfiles.git ~/neitnd_dotfiles
+git clone https://github.com/tientt3006/arch_hyprland_dotfiles.git ~/neitnd_dotfiles
 
 # Deploy symlinks
 cd ~/neitnd_dotfiles
@@ -119,6 +130,7 @@ Idle power draw target: **10–13W on battery** (verified with `powertop`).
 The comprehensive setup guide is included in this repo:
 
 - **[`arch_experience.md`](arch_experience.md)** — Full walkthrough from Arch ISO boot to a fully configured Hyprland desktop, covering installation, NVIDIA drivers, Secure Boot, theming, power optimization, security, and daily-use tips.
+- **[`arch_experience_assets/`](arch_experience_assets/)** — Contains detailed deep-dive manuals such as the comprehensive Tmux guide and Linux job control guide.
 
 ## Credits
 

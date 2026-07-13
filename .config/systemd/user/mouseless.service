@@ -1,0 +1,11 @@
+[Unit]
+Description=Mouseless keyboard-driven mouse
+After=graphical-session.target
+
+[Service]
+ExecStart=/bin/bash -c 'set -o pipefail; state="OFF"; /usr/bin/mouseless -d 2>&1 | while read -r line; do echo "$line"; if [[ "$line" == *"Switching to layer mouse"* ]]; then if [[ "$state" != "ON" ]]; then notify-send -a "Mouseless" -t 1000 "Mouse Mode" "ON"; state="ON"; fi; elif [[ "$line" == *"Switching to layer initial"* ]]; then if [[ "$state" != "OFF" ]]; then notify-send -a "Mouseless" -t 1000 "Mouse Mode" "OFF"; state="OFF"; fi; fi; done'
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=graphical-session.target

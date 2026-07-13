@@ -1,0 +1,12 @@
+[Unit]
+Description=Run random wallpaper script every 5 minutes
+PartOf=graphical-session.target
+
+[Timer]
+# Đợi 10 giây sau khi Hyprland khởi động xong rồi mới đổi ảnh lần đầu (tránh nặng máy lúc boot)
+OnActiveSec=10
+# Sau đó cứ mỗi 5 phút lại chạy một lần
+OnUnitActiveSec=5m
+
+[Install]
+WantedBy=timers.target

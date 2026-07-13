@@ -9,3 +9,7 @@ fi
 # fi
 
 
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/neitnd/.local/bin:$PATH"

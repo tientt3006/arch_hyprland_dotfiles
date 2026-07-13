@@ -1,0 +1,8 @@
+[Unit]
+Description=Change Wallpaper Randomly
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.config/hypr/scripts/random_wallpaper.sh

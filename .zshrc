@@ -164,3 +164,17 @@ hypr-recover() {
   hyprctl dispatch "hl.dsp.dpms('on')"
   echo "Màn hình đã bật. Ctrl+Alt+F1 để quay lại session Hyprland."
 }
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/neitnd/.local/bin:$PATH"
+
+# opencode
+export PATH=/home/neitnd/.opencode/bin:$PATH
+
+# --- Load Secrets (.env) ---
+# Load API keys and other sensitive variables from an external .env file
+# This file is ignored by Git, keeping your secrets safe.
+if [ -f "$HOME/.env" ]; then
+  source "$HOME/.env"
+fi

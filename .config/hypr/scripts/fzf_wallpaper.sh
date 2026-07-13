@@ -14,7 +14,7 @@ cd "$WALLPAPER_DIR" || exit 1
 clear
 
 # Mở FZF với preview ảnh qua kitten icat
-SELECTED=$(fd -t f -e jpg -e png -e jpeg -e gif . | fzf \
+SELECTED=$(fd -t f -e jpg -e png -e jpeg -e gif -e webp . | fzf \
     --prompt="🖼️ Chon Hinh Nen: " \
     --preview="kitten icat --clear --transfer-mode=memory --stdin=no --place=\${FZF_PREVIEW_COLUMNS}x\${FZF_PREVIEW_LINES}@0x0 {}" \
     --preview-window=right:50% \

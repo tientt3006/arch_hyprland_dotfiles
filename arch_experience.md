@@ -288,7 +288,7 @@ yay -S thunar thunar-volman thunar-archive-plugin tumbler ffmpegthumbnailer \
 
 ### Group 5: Terminal, Shell, Fonts
 ```bash
-yay -S kitty zsh fastfetch htop cozette-otb ipa-fonts noto-fonts
+yay -S kitty zsh fastfetch htop cozette-otb ipa-fonts noto-fonts tmux
 ```
 
 ### Group 6: Browser & Editors
@@ -1097,7 +1097,7 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 ### 2. Configuration (`~/.config/mouseless/config.yaml`)
 Create the config file to use `Capslock` as a `tap-hold` toggle:
 - **Tap Capslock:** Toggles normal uppercase functionality.
-- **Hold Capslock (400ms):** Enters Mouse Mode permanently. Tap Capslock again to exit.
+- **Hold Capslock:** Enters Mouse Mode (Momentary). Release Capslock to exit. (Previously: Hold 400ms to toggle permanently).
 
 ```yaml
 baseMouseSpeed: 750.0
@@ -1108,17 +1108,23 @@ mouseAccelerationCurve: 2.0
 layers:
 - name: initial
   bindings:
+    # --- Cấu hình cũ (Giữ 400ms để khóa chết mouse mode) ---
     # Tap for normal capslock, hold for 400ms to enter mouse mode
-    capslock: tap-hold capslock ; layer mouse ; 400
+    # capslock: tap-hold capslock ; layer mouse ; 400
+    
+    # --- Cấu hình mới (Tap để bật/tắt Capslock, Giữ để kích hoạt chuột) ---
+    capslock: tap-hold capslock ; toggle-layer mouse ; 150
+    
     # Prevent default esc behavior to stop notification spam
     esc: esc
 - name: mouse
   passThrough: true
   bindings:
+    # --- Cấu hình cũ (Bấm phím để thoát mouse mode) ---
     # Exit mouse mode
-    capslock: layer initial
-    esc: layer initial
-    enter: layer initial
+    # capslock: layer initial
+    # esc: layer initial
+    # enter: layer initial
 
     # Movement
     l: move  1  0
@@ -1151,17 +1157,39 @@ Description=Mouseless keyboard-driven mouse
 After=graphical-session.target
 
 [Service]
-ExecStart=/bin/bash -c 'state="OFF"; /usr/bin/mouseless -d 2>&1 | while read -r line; do if [[ "$line" == *"Switching to layer mouse"* ]]; then if [[ "$state" != "ON" ]]; then notify-send -a "Mouseless" -t 1000 "Mouse Mode" "ON"; state="ON"; fi; elif [[ "$line" == *"Switching to layer initial"* ]]; then if [[ "$state" != "OFF" ]]; then notify-send -a "Mouseless" -t 1000 "Mouse Mode" "OFF"; state="OFF"; fi; fi; done'
+ExecStart=/bin/bash -c 'set -o pipefail; state="OFF"; /usr/bin/mouseless -d 2>&1 | while read -r line; do echo "$line"; if [[ "$line" == *"Switching to layer mouse"* ]]; then if [[ "$state" != "ON" ]]; then notify-send -a "Mouseless" -t 1000 "Mouse Mode" "ON"; state="ON"; fi; elif [[ "$line" == *"Switching to layer initial"* ]]; then if [[ "$state" != "OFF" ]]; then notify-send -a "Mouseless" -t 1000 "Mouse Mode" "OFF"; state="OFF"; fi; fi; done'
 Restart=on-failure
 RestartSec=3
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target
 EOF
 
 systemctl --user daemon-reload
 systemctl --user enable --now mouseless
 ```
+
+## 5.15. TTY Mouse Support (GPM)
+To use the mouse for selecting, copying, and pasting text in the raw TTY (Virtual Console), install and start the General Purpose Mouse (GPM) daemon:
+```bash
+sudo pacman -S gpm
+sudo systemctl enable --now gpm
+```
+*Usage:* In a TTY (`Ctrl+Alt+F2`), highlight text by dragging the left mouse button. To paste, press the middle mouse button.
+
+## 5.16. Tmux (Terminal Multiplexer)
+Tmux is an essential tool for managing multiple terminal sessions, splitting windows, keeping processes running in the background, and scrolling/copying output natively in a raw TTY.
+
+### Purpose and Benefits
+- **Persistent Sessions**: Keep terminal sessions alive even when disconnected, closed, or switching between GUI and TTY.
+- **Multitasking**: Split the terminal into panes (horizontally and vertically) without a window manager.
+- **Scrollback Buffer**: Crucial for pure TTY usage. Since Linux Kernel 5.9 removed native TTY scrollback, Tmux (Copy Mode) is the standard way to scroll up and view long outputs.
+
+### Installation & Configuration
+Installed earlier via `pacman -S tmux`. By default, Tmux uses `Ctrl+B` as the prefix key, which can be unergonomic. We customize it to `Ctrl+A`, add Vim-like pane navigation, enable mouse support, and install the Tmux Plugin Manager (TPM).
+
+For the full setup instructions (the `~/.tmux.conf` config) and a complete usage guide (from basic to advanced), refer to the dedicated documentation file:
+👉 **[Tmux Setup & Usage Guide](arch_experience_assets/tmux_guide.md)**
 
 ---
 
@@ -2089,6 +2117,18 @@ The system relies on the GCC compiler, CMake for build configuration, and Ninja 
 * **javac & java:**
   * *Compile a Java file:* `javac Main.java` (outputs `Main.class`)
   * *Run a Java class:* `java Main`
+
+### Antigravity CLI (Terminal AI Agent)
+Antigravity CLI is an advanced autonomous AI coding assistant developed by Google DeepMind that runs directly in the terminal, capable of modifying codebases, planning, and debugging.
+* **Installation:**
+  ```bash
+  curl -fsSL https://antigravity.google/cli/install.sh | bash
+  ```
+  *(Note: The installer automatically downloads the binary to `~/.local/bin/agy` and adds it to your `~/.zshrc` PATH).*
+* **Setup & Usage:**
+  * Reload your shell: `source ~/.zshrc`
+  * Authenticate: `agy login`
+  * Execute a task: `agy "Find the network bug in config.yaml and fix it"`
 
 ---
 

@@ -1,4 +1,2 @@
 [sie][RNNoise#0]
 enableVad=true
-inputGain=-10.6
-vadThres=60

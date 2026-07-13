@@ -48,3 +48,15 @@ temp_docs/
 .config/cmus/search-history
 .config/cmus/playlists
 .config/cmus/autosave
+
+# ------------------------------------------------------------------------------
+# Bỏ qua các file Systemd chứa thông tin nhạy cảm (như ID folder rclone/onedrive)
+# Các file này vẫn được stow ở local nhưng sẽ KHÔNG bị đẩy lên Git public.
+# ------------------------------------------------------------------------------
+.config/systemd/user/*rclone*
+.config/systemd/user/*onedrive*
+
+# ------------------------------------------------------------------------------
+# Chứa các biến môi trường nhạy cảm (API Keys, Tokens)
+# ------------------------------------------------------------------------------
+.env

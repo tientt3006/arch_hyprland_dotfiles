@@ -1,0 +1,44 @@
+baseMouseSpeed: 750.0
+baseScrollSpeed: 20.0
+mouseAccelerationTime: 200.0
+mouseAccelerationCurve: 2.0
+
+layers:
+- name: initial
+  bindings:
+    # --- Cấu hình cũ (Giữ 400ms để khóa chết mouse mode) ---
+    # capslock: tap-hold capslock ; layer mouse ; 400
+    # --------------------------------------------------------
+    
+    # --- Cấu hình mới (Tap để bật/tắt Capslock, Giữ để kích hoạt chuột) ---
+    capslock: tap-hold capslock ; toggle-layer mouse ; 150
+    
+    esc: esc
+- name: mouse
+  passThrough: true
+  bindings:
+    # --- Cấu hình cũ (Bấm phím để thoát mouse mode) ---
+    # Exit mouse mode
+    # capslock: layer initial
+    # esc: layer initial
+    # enter: layer initial
+    # --------------------------------------------------
+
+    # Movement
+    l: move  1  0
+    h: move -1  0
+    k: move  0 -1
+    j: move  0  1
+    
+    # Scrolling
+    u: scroll up
+    i: scroll down
+
+    # Speeds
+    f: speed 4.0
+    s: speed 0.3
+
+    # Clicks
+    space: button left
+    semicolon: button right
+    apostrophe: button middle

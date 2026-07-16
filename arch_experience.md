@@ -1457,10 +1457,42 @@ SOUND_POWER_SAVE_ON_BAT=0
 ```
 Reload: `sudo tlp start`
 
+note: disable rustdesk service can save 5w and disable easyeffect save 1 - 2w.
+
 ### Prevent Platform Profile Auto-Switching
 TLP may forcefully switch your laptop's platform profile (fan speed/power mode) to `performance` on AC and `balanced` on battery, overriding your manual `Fn+Q` settings. Prevent this by forcing it to `balanced`:
 ```bash
 sudo bash -c 'echo -e "PLATFORM_PROFILE_ON_AC=balanced\nPLATFORM_PROFILE_ON_BAT=balanced" > /etc/tlp.d/99-platform-profile.conf'
+sudo tlp start
+```
+
+### Aggressive Battery Power Saving
+By default, TLP leaves CPU frequency/turbo settings untouched, causing the CPU to boost up to 4.3GHz and use `balance_performance` EPP even on battery (10-15W idle). Windows aggressively clamps these down when unplugged (~5W idle). Create a drop-in config to match:
+```bash
+sudo tee /etc/tlp.d/01-power-saving.conf << 'EOF'
+# CPU EPP: power = maximum power saving on battery
+CPU_ENERGY_PERF_POLICY_ON_AC=balance_performance
+CPU_ENERGY_PERF_POLICY_ON_BAT=power
+
+# Turbo Boost: disable on battery (cap at base clock ~2.3GHz, saves 3-8W)
+CPU_BOOST_ON_AC=1
+CPU_BOOST_ON_BAT=0
+
+# HWP Dynamic Boost: disable on battery (prevents random frequency spikes)
+CPU_HWP_DYN_BOOST_ON_AC=1
+CPU_HWP_DYN_BOOST_ON_BAT=0
+
+# Intel GPU: limit boost frequency on battery
+INTEL_GPU_BOOST_FREQ_ON_BAT=0
+
+# Wi-Fi: enable power saving on battery (adds ~50ms latency, saves ~0.5W)
+WIFI_PWR_ON_AC=off
+WIFI_PWR_ON_BAT=on
+
+# PCIE ASPM: use powersupersave on battery for max PCIe link power saving
+PCIE_ASPM_ON_AC=default
+PCIE_ASPM_ON_BAT=powersupersave
+EOF
 sudo tlp start
 ```
 
@@ -1530,17 +1562,22 @@ A common misconception: "The system reports 20W idle. The 20W idle total is dist
 | Display backlight | ~3–5W (varies with brightness) |
 | NVMe SSD (Gen 4) | ~1.5–2W |
 | RAM & Wi-Fi radio | ~2W |
-| NVIDIA dGPU (if awake) | ~5–6W |
-| **Intel CPU (H-Series, 12th Gen)** | 10w average|
+| NVIDIA dGPU (if awake) | ~5–6W (**0W with RTD3 + AQ_DRM_DEVICES**) |
+| **Intel CPU (H-Series, 12th Gen)** | ~10W default → **~5W with TLP EPP=power + no turbo** |
 
 ### How to Verify Your Optimization
 1. Unplug the charger.
 2. Disable "Hardware Acceleration" in Chrome Settings to prevent it from waking NVIDIA.
 3. Leave the system idle for 1 minute.
 4. Run `sudo powertop` and read the top line: `The battery reports a discharge rate of...`
-5. **Target:** 10–13W = fully optimized Arch Linux, comparable to Windows. But mine still say ~20w :((
+5. Verify NVIDIA is sleeping: `cat /sys/bus/pci/devices/0000:01:00.0/power/runtime_status` → should say `suspended`.
+6. Verify CPU EPP: `cat /sys/devices/system/cpu/cpu0/cpufreq/energy_performance_preference` → should say `power` on battery.
+`cat /sys/firmware/acpi/platform_profile`
+`tlp-stat -s`
+`lsof /dev/nvidia*`
+7. **Target:** 10–13W = fully optimized Arch Linux, comparable to Windows.
 
-## 8.6. **NOT SURE IT WORK** PRIME Offloading (Running Specific Apps on NVIDIA) **NOT SURE IT WORK**
+## 8.6. PRIME Offloading (Running Specific Apps on NVIDIA)
 
 Since our global environment variables force the system to use the Intel iGPU to save battery, you must explicitly tell heavy graphical apps (Games, Blender, OBS Studio) to wake up and use the NVIDIA card.
 
@@ -1579,7 +1616,7 @@ prime-run %command%
 
 *(Note: AI/Data Science libraries like PyTorch/TensorFlow use CUDA and automatically wake up the GPU. You do **not** need `prime-run` for them.)*
 
-## 8.7. **NOT SURE IT WORK** Enable NVIDIA Deep Sleep (RTD3)
+## 8.7. Enable NVIDIA Deep Sleep (RTD3) ✅ CONFIRMED WORKING
 Even if no apps are running on the NVIDIA GPU, the driver might keep it in an "Idle" state (P8) drawing ~5-6W continuously. To allow Turing/Ampere GPUs (like RTX 3050) to completely power off (0W / D3cold state) when not in use:
 
 1. Create a modprobe configuration file to pass the dynamic power management parameter to the kernel:
@@ -1600,16 +1637,22 @@ Even if no apps are running on the NVIDIA GPU, the driver might keep it in an "I
    ACTION=="add|bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", TEST=="power/control", ATTR{power/control}="auto"
    EOF'
    ```
-4. **Crucial for Wayland/Hyprland:** You must explicitly tell Aquamarine (Hyprland's backend) to use the Intel iGPU as the primary rendering card, while keeping the NVIDIA card as a secondary display-only output. This allows the NVIDIA card to sleep but still wake up automatically when an HDMI monitor is plugged in!
+4. **Crucial for Wayland/Hyprland:** You must explicitly tell Aquamarine (Hyprland's backend) to use ONLY the Intel iGPU. Without this, Hyprland opens `/dev/nvidia0` and keeps the GPU awake at ~6W 24/7 even with RTD3 configured!
    Edit your UWSM environment file `~/.config/uwsm/env` and add:
    ```bash
-   AQ_DRM_DEVICES=/dev/dri/by-path/pci-0000:00:02.0-card:/dev/dri/by-path/pci-0000:01:00.0-card
-   ```
-   *(Note: The first card `00:02.0` is Intel, the second `01:00.0` is NVIDIA. Order is crucial!)
-   , to view its name: `lspci | grep -i nvidia` and `ls -la /dev/dri/by-path/ | grep -i card`*
+   # Intel-only mode (maximum power saving, NVIDIA sleeps at 0W)
+   AQ_DRM_DEVICES=/dev/dri/by-path/pci-0000:00:02.0-card
 
-5. Reboot. Now, when `nvidia-smi` shows no processes, the GPU will enter deep sleep (0W).
-Verify with `cat /sys/bus/pci/devices/0000:01:00.0/power/runtime_status` to see it `suspended`.
+   # If you need an external monitor via HDMI (NVIDIA wakes only when plugged in):
+   # AQ_DRM_DEVICES=/dev/dri/by-path/pci-0000:00:02.0-card:/dev/dri/by-path/pci-0000:01:00.0-card
+   ```
+   *(Note: `00:02.0` = Intel, `01:00.0` = NVIDIA. Verify with `ls -la /dev/dri/by-path/ | grep card`)*
+
+5. Reboot. Now verify the GPU entered deep sleep (0W):
+   ```bash
+   cat /sys/bus/pci/devices/0000:01:00.0/power/runtime_status
+   # Should show: suspended
+   ```
 
 ## 8.8. **NOT SURE IT WORK** Complete iGPU-Only Mode (Optional)
 If you want to completely hide the NVIDIA GPU from the OS (similar to Lenovo Vantage's iGPU mode) so that it is never powered on under any circumstances, you can use **EnvyControl**.

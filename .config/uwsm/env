@@ -14,7 +14,9 @@ XMODIFIERS=@im=fcitx
 # __GLX_VENDOR_LIBRARY_NAME=nvidia
 # NVD_BACKEND=direct
 
-# Force Aquamarine (Hyprland backend) use Intel iGPU but may be no need to force it
-# currentlly it use intell allready, if no use a second display.
+# Force Aquamarine (Hyprland backend) to use Intel iGPU ONLY.
+# This allows NVIDIA to enter RTD3 deep sleep (0W) when idle.
+# If you need an external monitor via HDMI, add NVIDIA as secondary:
+# AQ_DRM_DEVICES=/dev/dri/by-path/pci-0000:00:02.0-card:/dev/dri/by-path/pci-0000:01:00.0-card
 # AQ_DRM_DEVICES=/dev/dri/by-path/pci-0000:00:02.0-card
 

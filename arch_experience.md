@@ -1654,25 +1654,31 @@ Even if no apps are running on the NVIDIA GPU, the driver might keep it in an "I
    # Should show: suspended
    ```
 
-## 8.8. **NOT SURE IT WORK** Complete iGPU-Only Mode (Optional)
-If you want to completely hide the NVIDIA GPU from the OS (similar to Lenovo Vantage's iGPU mode) so that it is never powered on under any circumstances, you can use **EnvyControl**.
-*(Note: With RTD3 Deep Sleep configured in 8.7, your NVIDIA card already consumes 0W. EnvyControl is only needed if you maystrictly want to disable it at the hardware level and don't plan to use `prime-run`).
-This may cause window dual boot false to find NVIDIA GPU too*
+## 8.8. On-The-Fly GPU Management (Cardwire)
+If you want to dynamically block or unblock the NVIDIA GPU **without rebooting**, use **Cardwire**. Unlike EnvyControl, it applies instantly, supports a "Smart" eBPF mode, and won't break Windows dual-boot GPU detection.
 
-1. Install EnvyControl:
+1. Install Cardwire from AUR:
    ```bash
-   yay -S envycontrol
+   yay -S cardwire
    ```
-2. Switch modes:
-   - **Integrated Only (NVIDIA completely disabled):**
-     ```bash
-     sudo envycontrol -s integrated
-     ```
-   - **Hybrid Mode (Re-enable NVIDIA + `prime-run`):**
-     ```bash
-     sudo envycontrol -s hybrid
-     ```
-3. **Reboot** the machine to apply the hardware changes.
+2. **Key Commands:**
+   - `sudo cardwire set integrated` — Blocks NVIDIA completely (Max battery saving).
+   - `sudo cardwire set hybrid` — Unblocks NVIDIA (Allows `prime-run`).
+   - `sudo cardwire set smart` — eBPF mode: Blocks NVIDIA by default but selectively allows specific apps to wake it at launch.
+   - `cardwire get` / `cardwire list` — Check current GPU status.
+
+3. **Configuration Daemon (Optional)**
+   Edit `/etc/cardwire/cardwire.toml` to automate GPU switching when plugging/unplugging the charger:
+   ```toml
+   auto_apply_gpu_state = true
+   experimental_nvidia_block = false
+   battery_auto_switch = true
+   battery_auto_switch_mode = "hybrid" # Switches to hybrid on AC power, returns to integrated on battery
+   ```
+   Apply and start the daemon:
+   ```bash
+   sudo systemctl enable --now cardwired
+   ```
 
 ---
 

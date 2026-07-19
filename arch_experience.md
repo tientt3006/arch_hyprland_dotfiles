@@ -808,6 +808,19 @@ sudo pacman -S dnsmasq hostapd
 - **IdeaPad Gaming 3 limitation:** Only `channel <= 1` → set the hotspot channel to match the channel of the Wi-Fi network you are already connected to., and look like my latop can only share wifi 2.4Ghz, so i need to go to `Edit Connection...` (network-manager-applet to edit current dual bands wifi to specific 2.4ghz by edit it BSSID and Chanel to 2.4Ghz, 
 - View current channel and 2.4Ghz wifi BSSID: `nmcli device wifi`
 
+**Why can't I share 5GHz on Linux like on Windows?**
+- Most 5GHz channels on Linux are flagged with `(no IR)` (No Initiate Radiation) or `radar detection` (DFS) due to strict open-source regulatory compliance. This prevents the Wi-Fi card from initiating an Access Point (AP) on 5GHz, allowing it only to connect as a client.
+- Windows bypasses this by using proprietary Wi-Fi Direct (P2P-GO) multiplexing to simulate a dual-band hotspot. On Linux, standard AP mode is used for stability, forcing you to use the 2.4GHz band if your card (like AX201) lacks simultaneous dual-band AP capabilities.
+
+**Manual Hotspot Creation via CLI:**
+1. Get the Wi-Fi interface name: `nmcli -t d`
+2. Get the current active channel: `nmcli -t d w | grep "\*"` (Look at the channel number)
+3. Create the hotspot manually:
+   ```bash
+   sudo create_ap wlp0s20f3 wlp0s20f3 "AP_SSID" "AP_PASSWORD" -c 6
+   ```
+   *(Replace `wlp0s20f3` and `6` with your actual interface and channel)*
+
 ## 5.11. Cloud Storage Sync (OneDrive & Google Drive)
 
 > **Dual-Boot Warning:** Never point Linux sync clients directly to the existing NTFS Windows sync folder. Due to independent database states and file system metadata differences (ext4 vs NTFS), this can cause severe data loss, conflict loops, or duplicate files. Always use separate local sync folders for Linux.

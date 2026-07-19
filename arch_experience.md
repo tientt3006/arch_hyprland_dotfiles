@@ -1680,6 +1680,24 @@ If you want to dynamically block or unblock the NVIDIA GPU **without rebooting**
    sudo systemctl enable --now cardwired
    ```
 
+## 8.9. Advanced Idle & Lid Management (Hypridle + Logind)
+
+To achieve Windows-like power management (different idle timeouts for AC vs. Battery) and reliable Lid behaviors, several logic gaps in Hyprland/Hypridle were addressed via custom scripts:
+
+1. **Dual Profiles in Hypridle:** Hypridle natively only supports a single set of timeouts. 
+   - *Logic:* Configure both AC and Battery timeouts in `hypridle.conf` and pipe them through a wrapper script (`smart-idle.sh`). The script checks current power state and aborts if the timer's intended profile doesn't match reality.
+2. **The "Double Toggle" Black Screen Bug:**
+   - *Bug:* `dpms` dispatcher behaves as a toggle. If a user is on AC for 20 mins, both the 5-min (Bat) and 15-min (AC) timers elapse. Waking the machine triggers `on-resume` for *both*, causing DPMS to toggle twice (On -> Off), leaving the screen permanently black.
+   - *Fix:* The wrapper script explicitly checks the monitor's true state (`dpmsStatus` via `hyprctl monitors -j`) before issuing a toggle command.
+3. **Timer Reset on Plug/Unplug:**
+   - *Bug:* Plugging/unplugging the charger isn't user activity, so Hypridle timers don't reset. If unplugged at minute 14, the 15-minute timer triggers 1 minute later.
+   - *Fix:* A background daemon (`power-watcher.sh`) listens to `upower` events and restarts the `hypridle` service on power state changes, resetting all timers to zero.
+4. **Lid Switch Independence:** 
+   - `systemd-logind` ignores lid switches (`HandleLidSwitch=ignore`). 
+   - Hyprland handles the lid directly via `bindl`. Closing the lid locks the screen and turns DPMS off, but does *not* suspend the system.
+   - Suspension relies entirely on Hypridle's timers counting in the background while the lid is closed. 
+5. **Brightness vs. DPMS:** `brightnessctl` (dimming backlight) and DPMS (powering off the panel) are distinct. Changing brightness while DPMS is off will not wake the panel.
+
 ---
 
 # Part 9: Security & Firewall

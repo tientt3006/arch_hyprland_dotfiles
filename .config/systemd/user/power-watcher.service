@@ -1,0 +1,11 @@
+[Unit]
+Description=Power state watcher for Hypridle (reset idle timers on AC/Battery change)
+After=hypridle.service
+
+[Service]
+ExecStart=%h/.config/hypr/scripts/power-watcher.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

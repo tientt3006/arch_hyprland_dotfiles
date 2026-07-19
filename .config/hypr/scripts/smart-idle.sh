@@ -3,24 +3,24 @@
 # Lấy trạng thái nguồn (1: đang sạc, 0: dùng pin)
 AC_ONLINE=$(cat /sys/class/power_supply/*/online 2>/dev/null | head -n 1)
 
-MODE=$1    # Lời gọi: "ac", "bat", hoặc "resume"
+MODE=$1    # Lời gọi: "ac", "bat", "ac_resume", "bat_resume"
 ACTION=$2  # Lời gọi: "dim", "dpms_off", "dpms_on", "lock", "suspend"
 
 # Kiểm tra hoàn cảnh: Đang dùng pin mà mốc thời gian là của cắm sạc -> Bỏ qua!
-if [ "$MODE" = "ac" ] && [ "$AC_ONLINE" != "1" ]; then exit 0; fi
-if [ "$MODE" = "bat" ] && [ "$AC_ONLINE" == "1" ]; then exit 0; fi
+if [[ "$MODE" == "ac"* ]] && [ "$AC_ONLINE" != "1" ]; then exit 0; fi
+if [[ "$MODE" == "bat"* ]] && [ "$AC_ONLINE" == "1" ]; then exit 0; fi
 
 # Nếu đúng hoàn cảnh, thực thi lệnh:
 case $ACTION in
     dim)
-        if [ "$MODE" = "resume" ]; then
+        if [[ "$MODE" == *"resume"* ]]; then
             brightnessctl -r
         else
             brightnessctl -s # Lưu lại độ sáng cũ
             CURRENT=$(brightnessctl g)
             MAX=$(brightnessctl m)
             TARGET=$((MAX * 5 / 100))
-            
+
             if [ "$CURRENT" -gt "$TARGET" ]; then
                 STEP=$(( (CURRENT - TARGET) / 30 ))
                 if [ "$STEP" -gt 0 ]; then
@@ -35,10 +35,18 @@ case $ACTION in
         fi
         ;;
     dpms_off)
-        hyprctl dispatch "hl.dsp.dpms('off')"
+        # Chỉ toggle nếu màn hình đang BẬT (tránh toggle ngược)
+        DPMS=$(hyprctl monitors -j | grep -o '"dpmsStatus": [a-z]*' | head -1 | awk '{print $2}')
+        if [ "$DPMS" = "true" ]; then
+            hyprctl dispatch "hl.dsp.dpms('off')"
+        fi
         ;;
     dpms_on)
-        hyprctl dispatch "hl.dsp.dpms('on')"
+        # Chỉ toggle nếu màn hình đang TẮT (tránh toggle ngược)
+        DPMS=$(hyprctl monitors -j | grep -o '"dpmsStatus": [a-z]*' | head -1 | awk '{print $2}')
+        if [ "$DPMS" = "false" ]; then
+            hyprctl dispatch "hl.dsp.dpms('on')"
+        fi
         ;;
     lock)
         loginctl lock-session

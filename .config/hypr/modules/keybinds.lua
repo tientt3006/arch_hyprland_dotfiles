@@ -122,7 +122,12 @@ hl.bind(mainMod .. " + M",  hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@
 -- Lid switch
 hl.bind("switch:on:Lid Switch", function()
     os.execute("loginctl lock-session &")
+    os.execute("sleep 1")
     hl.dsp.dpms('off')
 end, { locked = true })
 hl.bind("switch:off:Lid Switch", function() hl.dsp.dpms('on') end, { locked = true })
 
+-- Clear crashed lockscreen
+hl.bind(mainMod .. " + CTRL + ALT + Backspace", function()
+    hl.clear_crashed_lockscreen()
+end, { locked = true })

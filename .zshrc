@@ -178,3 +178,32 @@ export PATH=/home/neitnd/.opencode/bin:$PATH
 if [ -f "$HOME/.env" ]; then
   source "$HOME/.env"
 fi
+
+# Tích hợp zsh vi-mode với Wayland clipboard (wl-clipboard)
+function vi-yank-wl-copy {
+    zle vi-yank
+    echo -n "$CUTBUFFER" | wl-copy
+}
+zle -N vi-yank-wl-copy
+bindkey -a 'y' vi-yank-wl-copy
+
+function vi-yank-whole-line-wl-copy {
+    zle vi-yank-whole-line
+    echo -n "$CUTBUFFER" | wl-copy
+}
+zle -N vi-yank-whole-line-wl-copy
+bindkey -a 'Y' vi-yank-whole-line-wl-copy
+
+function vi-put-after-wl-paste {
+    CUTBUFFER=$(wl-paste)
+    zle vi-put-after
+}
+zle -N vi-put-after-wl-paste
+bindkey -a 'p' vi-put-after-wl-paste
+
+function vi-put-before-wl-paste {
+    CUTBUFFER=$(wl-paste)
+    zle vi-put-before
+}
+zle -N vi-put-before-wl-paste
+bindkey -a 'P' vi-put-before-wl-paste

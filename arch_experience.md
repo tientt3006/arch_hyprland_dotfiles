@@ -1204,6 +1204,46 @@ Installed earlier via `pacman -S tmux`. By default, Tmux uses `Ctrl+B` as the pr
 For the full setup instructions (the `~/.tmux.conf` config) and a complete usage guide (from basic to advanced), refer to the dedicated documentation file:
 👉 **[Tmux Setup & Usage Guide](arch_experience_assets/tmux_guide.md)**
 
+## 5.13. Default Applications & Terminal Handlers
+
+On Arch Linux (and Wayland environments like Hyprland), default applications are managed by the XDG standard via the `mimeapps.list` file.
+
+**How Default Apps are Managed:**
+- **Configuration file:** `~/.config/mimeapps.list`
+- **Management tools:** You can view or change defaults using `xdg-mime` (CLI) or through your file manager (like Thunar's "Open With" dialog).
+- **To view all custom default apps:** `cat ~/.config/mimeapps.list`
+- **To query the default app for a specific file type:** `xdg-mime query default <mime-type>` (e.g., `xdg-mime query default text/plain`).
+
+**Fixing the "Terminal Required" Error for Neovim:**
+By default, the system-wide Neovim entry (`/usr/share/applications/nvim.desktop`) contains `Terminal=true`. File managers like Thunar on Hyprland often struggle to automatically detect the default terminal emulator (like Kitty), resulting in the error: *failed to open file, unable to find terminal required for application*. (GVim works because it has `Terminal=false` and opens its own GUI window).
+
+To fix this, create a custom `.desktop` file that explicitly launches Kitty to run Neovim:
+
+1. Create **`~/.local/share/applications/nvim-kitty.desktop`**:
+   ```ini
+   [Desktop Entry]
+   Name=Neovim (Kitty)
+   Comment=Edit text files in Neovim using Kitty
+   TryExec=kitty
+   Exec=kitty -e nvim %F
+   Terminal=false
+   Type=Application
+   Keywords=Text;editor;
+   Icon=nvim
+   Categories=Utility;TextEditor;Development;
+   MimeType=text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;
+   ```
+
+2. Update the local application database:
+   ```bash
+   update-desktop-database ~/.local/share/applications
+   ```
+
+3. Set the custom app as the default for shell scripts and plain text files:
+   ```bash
+   xdg-mime default nvim-kitty.desktop application/x-shellscript text/plain
+   ```
+
 ---
 
 # Part 6: Theming (Catppuccin Mocha)

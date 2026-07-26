@@ -3,7 +3,8 @@ local colors = require("wallust-colors")
 
 hl.config({
     misc = {
-        focus_on_activate = true
+        focus_on_activate = true,
+        allow_session_lock_restore = true,  -- Cho phép hyprlock phục hồi nếu bị crash thay vì kẹt màn đen
     },
     
     cursor = {

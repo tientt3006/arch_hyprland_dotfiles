@@ -48,9 +48,9 @@ Tài liệu này hướng dẫn cách chuyển nguyên hệ điều hành Arch L
    sudo mount /dev/sdX1 /mnt/boot
    ```
 
-2. Sử dụng công cụ `rsync` để copy toàn bộ hệ điều hành (loại bỏ các thư mục hệ thống tạm thời):
+2. Sử dụng công cụ `rsync` để copy toàn bộ hệ điều hành (loại bỏ các thư mục hệ thống tạm thời và swapfile):
    ```bash
-   sudo rsync -aAXv --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} / /mnt
+   sudo rsync -aAXv --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found","/swapfile"} / /mnt
    ```
    *Quá trình này sẽ mất một lúc tùy thuộc vào tốc độ đọc/ghi của ổ cứng và dung lượng dữ liệu hiện tại của bạn.*
 
@@ -75,7 +75,13 @@ Tài liệu này hướng dẫn cách chuyển nguyên hệ điều hành Arch L
 
 Vì mục tiêu là mang ổ cứng này cắm vào máy tính khác vẫn boot được, ta cần chỉnh sửa lại Initramfs để nó chứa đủ driver (module) cho mọi loại phần cứng thay vì lược bỏ chỉ để vừa với máy Lenovo hiện tại. Đồng thời ta cần xóa các cấu hình bị "cứng" (hardcoded).
 
-1. **Sửa file `mkinitcpio.conf` để nạp toàn bộ Driver:**
+1. **Cài đặt Microcode và Driver mã nguồn mở cơ bản:**
+   Để đảm bảo máy nhận diện tốt CPU và Card màn hình của bất kỳ hãng nào, hãy cài các gói sau:
+   ```bash
+   sudo pacman -S intel-ucode amd-ucode xf86-video-amdgpu xf86-video-ati xf86-video-nouveau
+   ```
+
+2. **Sửa file `mkinitcpio.conf` để nạp toàn bộ Driver:**
    ```bash
    nano /etc/mkinitcpio.conf
    ```
@@ -88,13 +94,13 @@ Vì mục tiêu là mang ổ cứng này cắm vào máy tính khác vẫn boot 
    mkinitcpio -P
    ```
 
-2. **Xóa cấu hình Xorg ép dùng card Intel (Quan trọng):**
+3. **Xóa cấu hình Xorg ép dùng card Intel (Quan trọng):**
    Trong `arch_experience.md`, bạn có hardcode BusID của card Intel cho SDDM (`PCI:0:2:0`). Nếu sang máy khác không có đúng địa chỉ này, SDDM sẽ lỗi đen màn hình.
    ```bash
    rm -f /etc/X11/xorg.conf.d/10-intel-sddm.conf
    ```
 
-3. **Chỉnh sửa các biến môi trường ép dùng NVIDIA (Tùy chọn nhưng khuyến nghị):**
+4. **Chỉnh sửa các biến môi trường ép dùng NVIDIA (Tùy chọn nhưng khuyến nghị):**
    Nếu bạn cắm ổ vào máy dùng card AMD/Intel, các biến ép dùng NVIDIA sẽ gây lỗi giao diện.
    ```bash
    nano /home/neitnd/.config/uwsm/env
@@ -141,6 +147,8 @@ Vì mục tiêu là mang ổ cứng này cắm vào máy tính khác vẫn boot 
    ```ini
    title   Arch Linux (Portable Standard)
    linux   /vmlinuz-linux
+   initrd  /amd-ucode.img
+   initrd  /intel-ucode.img
    initrd  /initramfs-linux.img
    options root=UUID=<UUID_CUA_ROOT> rw quiet
    ```
@@ -153,6 +161,8 @@ Vì mục tiêu là mang ổ cứng này cắm vào máy tính khác vẫn boot 
    ```ini
    title   Arch Linux (NVIDIA Mode)
    linux   /vmlinuz-linux
+   initrd  /amd-ucode.img
+   initrd  /intel-ucode.img
    initrd  /initramfs-linux.img
    options root=UUID=<UUID_CUA_ROOT> rw quiet nvidia_drm.modeset=1 nvidia_drm.fbdev=1
    ```
